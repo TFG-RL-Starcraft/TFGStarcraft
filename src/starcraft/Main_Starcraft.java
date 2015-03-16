@@ -9,6 +9,7 @@ import q_learning.QTable;
 import q_learning.QTable_Array;
 import q_learning.State;
 import bwapi.*;
+import bwapi.Region;
 import bwta.*;
 
 public class Main_Starcraft{
@@ -50,7 +51,10 @@ public class Main_Starcraft{
 //				System.out.println("MarineX: " + marine.getPosition().getX() / 32 + " MarineY: "
 //						+ marine.getPosition().getY() / 32);
 				
-				
+				// INICIO - Crear estado final
+                Region meta = game.getRegionAt(15, 15);
+                //System.out.println(meta.getBoundsLeft() + " " + meta.getBoundsRight() + " " + meta.getBoundsTop() + " " + meta.getBoundsBottom());
+                // FIN - Crear estado
 				State ls = new StarcraftState(1, 1, game.mapWidth(), game.mapHeight());
 				Environment e = new StarcraftEnvironment(game, marine, ls);
 				
@@ -62,7 +66,7 @@ public class Main_Starcraft{
 				qp = new QPlayer(e, qT);
 				numIter = 0;
 				
-				game.setLocalSpeed(0);
+				game.setLocalSpeed(-1);
 				//game.setGUI(false);
 				
                 //game.enableFlag(1); 	// This command allows you to manually control the units during the game.
@@ -79,6 +83,7 @@ public class Main_Starcraft{
                 //if some action is done
                 if (q.step() != null) 	//qLearner
                 {
+                	//System.out.println(marine.getPosition().getX() + " " + marine.getPosition().getY());
                 	numIter++;
                 }
                 

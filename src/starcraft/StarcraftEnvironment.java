@@ -73,7 +73,7 @@ public class StarcraftEnvironment implements Environment{
 		// Here you must enter all the rewards of learning
 		
 		if (isValid(posX, posY)) {
-			unit.move(new Position(posX*BOX_LENGTH, posY*BOX_LENGTH));
+			unit.move(new Position(posX*BOX_LENGTH+(BOX_LENGTH/2), posY*BOX_LENGTH+(BOX_LENGTH/2)));
 			
 			state = new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
 			if(isFinalState()) {
@@ -114,7 +114,9 @@ public class StarcraftEnvironment implements Environment{
 	
 	// The position x,y is valid
 	private boolean isValid(int x, int y) {
-		if((0 <= x) && (x < game.mapWidth()) && (0 <= y) && (y < game.mapHeight())){
+		Position p = new Position(x*BOX_LENGTH+(BOX_LENGTH/2), y*BOX_LENGTH+(BOX_LENGTH/2));
+		if((0 <= x) && (x < game.mapWidth()*BOX_LENGTH) && (0 <= y) && (y < game.mapHeight()*BOX_LENGTH)
+				&& game.hasPath(unit.getPosition(), p)){
 			boolean dontCol = true;
 			int i = 0;
 			Unit m;
@@ -122,7 +124,7 @@ public class StarcraftEnvironment implements Environment{
 			// Check if collide with other units
 			while(dontCol && i < game.getAllUnits().size()){
 				m = game.getAllUnits().get(i);
-				if(itsInside(m.getTop(),m.getBottom(),m.getRight(),m.getLeft(), x*BOX_LENGTH, y*BOX_LENGTH)) {
+				if(itsInside(m.getTop(),m.getBottom(),m.getRight(),m.getLeft(), x*BOX_LENGTH+(BOX_LENGTH/2), y*BOX_LENGTH+(BOX_LENGTH/2))) {
 					dontCol = false;
 				}
 				i++;
