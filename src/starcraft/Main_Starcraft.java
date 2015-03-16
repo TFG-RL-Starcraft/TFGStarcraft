@@ -66,7 +66,7 @@ public class Main_Starcraft{
 				qp = new QPlayer(e, qT);
 				numIter = 0;
 				
-				game.setLocalSpeed(-1);
+				game.setLocalSpeed(0);
 				//game.setGUI(false);
 				
                 //game.enableFlag(1); 	// This command allows you to manually control the units during the game.

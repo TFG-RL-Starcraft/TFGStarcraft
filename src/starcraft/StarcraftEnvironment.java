@@ -71,9 +71,10 @@ public class StarcraftEnvironment implements Environment{
 		// Here we move the units or execute the actions.	 
 		// Later is a "switch" evaluating if the new State/Action would have a good/bad Reward
 		// Here you must enter all the rewards of learning
+		Position p = isValid(posX, posY);
 		
-		if (isValid(posX, posY)) {
-			unit.move(new Position(posX*BOX_LENGTH+(BOX_LENGTH/2), posY*BOX_LENGTH+(BOX_LENGTH/2)));
+		if (p != null) {
+			unit.move(p);
 			
 			state = new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
 			if(isFinalState()) {
@@ -112,8 +113,13 @@ public class StarcraftEnvironment implements Environment{
 		
 	}
 	
-	// The position x,y is valid
-	private boolean isValid(int x, int y) {
+	/**
+	 * See if the converted to Starcraft logical position x, y is a valid position and can go up there
+	 * @param x Height
+	 * @param y Width
+	 * @return Starcraft position or null if there is not valid
+	 */
+	private Position isValid(int x, int y) {
 		Position p = new Position(x*BOX_LENGTH+(BOX_LENGTH/2), y*BOX_LENGTH+(BOX_LENGTH/2));
 		if((0 <= x) && (x < game.mapWidth()*BOX_LENGTH) && (0 <= y) && (y < game.mapHeight()*BOX_LENGTH)
 				&& game.hasPath(unit.getPosition(), p)){
@@ -125,14 +131,14 @@ public class StarcraftEnvironment implements Environment{
 			while(dontCol && i < game.getAllUnits().size()){
 				m = game.getAllUnits().get(i);
 				if(itsInside(m.getTop(),m.getBottom(),m.getRight(),m.getLeft(), x*BOX_LENGTH+(BOX_LENGTH/2), y*BOX_LENGTH+(BOX_LENGTH/2))) {
-					dontCol = false;
+					return null;
 				}
 				i++;
 			}
 			
-			return dontCol;
+			return p;
 		}else{
-			return false;
+			return null;
 		}
 	}
 
