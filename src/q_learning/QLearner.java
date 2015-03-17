@@ -21,7 +21,7 @@ public class QLearner {
 	// Executes one step in the learning process if the state has changed
 	public Action step()
 	{     
-		Action action = null;
+		Action action = null;		
 		
 		if(environment.stateHasChanged()) {
 			State state = environment.state();
@@ -38,6 +38,9 @@ public class QLearner {
 			double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));
 			newValue = Math.max(0, newValue); //TODO, ver si tiene sentido este max
 			qTable.set(state, action, newValue);	
+			
+			if(environment.isFinalState())
+				environment.reset();
 		}
 		
 		return action;

@@ -38,7 +38,11 @@ public class Main_Starcraft{
             public void onStart() {
                 game = mirror.getGame();
                 self = game.self();
-
+                
+                if(numIter!=0){
+                	Log.printLog("log.txt", Integer.toString(numIter));
+                	numIter= 0;
+                }
                 //Use BWTA to analyze map
                 //This may take a few minutes if the map is processed first time!
                 System.out.println("Analyzing map...");
@@ -55,7 +59,8 @@ public class Main_Starcraft{
                 Region meta = game.getRegionAt(15, 15);
                 //System.out.println(meta.getBoundsLeft() + " " + meta.getBoundsRight() + " " + meta.getBoundsTop() + " " + meta.getBoundsBottom());
                 // FIN - Crear estado
-				State ls = new StarcraftState(1, 1, game.mapWidth(), game.mapHeight());
+                
+				State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
 				Environment e = new StarcraftEnvironment(game, marine, ls);
 				
 				QTable qT = IO_QTable.leerTabla("qtabla.txt");
@@ -74,30 +79,48 @@ public class Main_Starcraft{
 				
 				
             }
+            
+/*            private void remakeGame(){
+            	Log.printLog("log.txt", Integer.toString(numIter));
+            	getMarine();            	
+            	numIter = 0;
+            	numExper++;
+            	game.restartGame();
+            	
+            	State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
+				Environment e = new StarcraftEnvironment(game, marine, ls);
+				
+				QTable qT = q.qTable();
+				q = new QLearner(e, qT, StarcraftAction.MOVE_UP);
+				qp = new QPlayer(e, qT);
+            }*/
  
             @Override
             public void onFrame() {
                 game.setTextSize(10);
                 game.drawTextScreen(10, 10, "Playing as " + self.getName() + " - " + self.getRace());
-
+                
+                if(numExper==100){
+                	game.leaveGame();
+                }
+                
+                
                 //if some action is done
                 if (q.step() != null) 	//qLearner
                 {
                 	//System.out.println(marine.getPosition().getX() + " " + marine.getPosition().getY());
                 	numIter++;
                 }
-                
+                        
                 //qp.step(); 	//qPlayer
             }
             
 	        @Override
 	        public void onEnd(boolean isWinner) {
 	    		System.out.println("END");
-	    		Log.printLog("log.txt", Integer.toString(numIter));
-	    		//q.endOfGame();
+	    		//Log.printLog("log.txt", Integer.toString(numIter));
 	    		IO_QTable.escribirTabla(q.qTable(), "qtabla.txt");
 	    		time_end = System.currentTimeMillis();	    		
-	    		numExper++;
 	            System.out.println("The Experiment " + numExper + " has taken "+ ( time_end - time_start ) +" milliseconds");  
 	        }  
             

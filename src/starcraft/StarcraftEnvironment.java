@@ -33,6 +33,10 @@ public class StarcraftEnvironment implements Environment{
 	public int numActions() {
 		return StarcraftAction.values().length;
 	}
+	
+	public void setUnit(Unit u){
+		unit = u;
+	}
 
 	@Override
 	public double execute(Action action) {
@@ -110,7 +114,7 @@ public class StarcraftEnvironment implements Environment{
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-		
+		game.restartGame();
 	}
 	
 	/**
