@@ -23,8 +23,8 @@ public class Main_Starcraft{
     private Player self;
     private QLearner q;
     private QPlayer qp;
+    private int maxIter = 500;
     
-    private int numIter; //number of iterations for a experiment
     private static int numExper; //number of experiments
 
     public void run() {
@@ -39,10 +39,9 @@ public class Main_Starcraft{
                 game = mirror.getGame();
                 self = game.self();
                 
-                if(numIter!=0){
-                	Log.printLog("log.txt", Integer.toString(numIter));
-                	numIter= 0;
-                }
+               
+//                Log.printLog("log.txt", Integer.toString(numIter));
+                
                 //Use BWTA to analyze map
                 //This may take a few minutes if the map is processed first time!
                 System.out.println("Analyzing map...");
@@ -67,11 +66,10 @@ public class Main_Starcraft{
 				if(qT == null) {
 					qT = new QTable_Array(e.numStates(), e.numActions(), StarcraftAction.MOVE_UP);
 				}
-				q = new QLearner(e, qT, StarcraftAction.MOVE_UP);
+				q = new QLearner(e, qT, StarcraftAction.MOVE_UP,maxIter);
 				qp = new QPlayer(e, qT);
-				numIter = 0;
 				
-				game.setLocalSpeed(0);
+			//	game.setLocalSpeed(0);
 				//game.setGUI(false);
 				
                 //game.enableFlag(1); 	// This command allows you to manually control the units during the game.
@@ -99,25 +97,18 @@ public class Main_Starcraft{
             public void onFrame() {
                 game.setTextSize(10);
                 game.drawTextScreen(10, 10, "Playing as " + self.getName() + " - " + self.getRace());
-                
-                if(numIter==2000){
-                	System.out.println("RESET");
-                	game.restartGame();
-                }
-                
-                if(numExper==100){
+                                
+                if(numExper==200){
+                	IO_QTable.escribirTabla(q.qTable(), "qtabla.txt");
                 	game.leaveGame();
                 }
                 
                 
                 //if some action is done
-                if (q.step() != null) 	//qLearner
-                {
-                	//System.out.println(marine.getPosition().getX() + " " + marine.getPosition().getY());
-                	numIter++;
-                }
+                //q.step(); 	//qLearner
+           
                         
-                //qp.step(); 	//qPlayer
+                qp.step(); 	//qPlayer
             }
             
 	        @Override
@@ -127,6 +118,7 @@ public class Main_Starcraft{
 	    		IO_QTable.escribirTabla(q.qTable(), "qtabla.txt");
 	    		time_end = System.currentTimeMillis();	    		
 	            System.out.println("The Experiment " + numExper + " has taken "+ ( time_end - time_start ) +" milliseconds");  
+	            numExper++;
 	        }  
             
             

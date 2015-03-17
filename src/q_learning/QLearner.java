@@ -1,5 +1,7 @@
 package q_learning;
 
+import entrada_salida.Log;
+
 
 public class QLearner {
 
@@ -10,12 +12,16 @@ public class QLearner {
 	private Environment environment;
 	private QTable qTable;
 	private Action action;
+	private int numIter;
+	private int maxNumIter;
 		
-	public QLearner(Environment environment, QTable qTable, Action action)
+	public QLearner(Environment environment, QTable qTable, Action action,int maxNumIter)
 	{
 		this.environment = environment;
 		this.qTable = qTable;
 		this.action = action;
+		this.maxNumIter = maxNumIter;
+		numIter = 0;
 	}
 	
 	// Executes one step in the learning process if the state has changed
@@ -39,9 +45,12 @@ public class QLearner {
 			newValue = Math.max(0, newValue); //TODO, ver si tiene sentido este max
 			qTable.set(state, action, newValue);	
 			
-			if(environment.isFinalState()){
+			if(environment.isFinalState() || numIter>=maxNumIter){
+				Log.printLog("log.txt", Integer.toString(numIter));
+				numIter=0;
 				environment.reset();
 			}
+			numIter++;
 		}
 		
 		return action;

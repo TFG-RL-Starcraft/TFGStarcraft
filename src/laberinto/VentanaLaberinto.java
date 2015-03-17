@@ -140,7 +140,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
         env = new LaberintoEnvironment(this, maxX, maxY, casilla_incial, casilla_final);
         qT = new QTable_Array(env.numStates(), env.numActions(), LaberintoAction.MOVE_UP);        
-        q = new QLearner(env, qT, LaberintoAction.MOVE_UP); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
+        q = new QLearner(env, qT, LaberintoAction.MOVE_UP,2000); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
 	}
 

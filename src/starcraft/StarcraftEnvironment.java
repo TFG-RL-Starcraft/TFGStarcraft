@@ -1,5 +1,6 @@
 package starcraft;
 
+import entrada_salida.Log;
 import q_learning.Action;
 import q_learning.Environment;
 import q_learning.State;
@@ -111,8 +112,7 @@ public class StarcraftEnvironment implements Environment{
 				reward = 1000;
 			}
 			if(vTable.get(state.getValue())){
-				reward = -1;
-				System.out.println("REPETIDO");
+			//	reward = -1;
 			}
 		} else {
 			reward = -100;
