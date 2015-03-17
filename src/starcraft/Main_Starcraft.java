@@ -100,6 +100,11 @@ public class Main_Starcraft{
                 game.setTextSize(10);
                 game.drawTextScreen(10, 10, "Playing as " + self.getName() + " - " + self.getRace());
                 
+                if(numIter==2000){
+                	System.out.println("RESET");
+                	game.restartGame();
+                }
+                
                 if(numExper==100){
                 	game.leaveGame();
                 }

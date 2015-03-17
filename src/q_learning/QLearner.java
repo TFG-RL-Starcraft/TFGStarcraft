@@ -39,8 +39,9 @@ public class QLearner {
 			newValue = Math.max(0, newValue); //TODO, ver si tiene sentido este max
 			qTable.set(state, action, newValue);	
 			
-			if(environment.isFinalState())
+			if(environment.isFinalState()){
 				environment.reset();
+			}
 		}
 		
 		return action;

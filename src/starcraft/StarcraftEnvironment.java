@@ -3,6 +3,7 @@ package starcraft;
 import q_learning.Action;
 import q_learning.Environment;
 import q_learning.State;
+import q_learning.VisitedStateTable;
 import bwapi.Game;
 import bwapi.Position;
 import bwapi.Unit;
@@ -15,6 +16,7 @@ public class StarcraftEnvironment implements Environment{
 	private Unit unit;
 	private State state;
 	private State finalState;
+	private VisitedStateTable vTable;
 	
 	public StarcraftEnvironment(Game game, Unit unit, State finalState) {
 		this.game = game;
@@ -22,6 +24,7 @@ public class StarcraftEnvironment implements Environment{
 		this.state = new StarcraftState((int)unit.getPosition().getX()/BOX_LENGTH, 
 				(int)unit.getPosition().getY()/BOX_LENGTH, game.mapWidth(), game.mapHeight());
 		this.finalState = finalState;
+		vTable = new VisitedStateTable(numStates());
 	}
 	
 	@Override
@@ -46,7 +49,7 @@ public class StarcraftEnvironment implements Environment{
 		// Current position
 		int posX = (int)unit.getPosition().getX()/BOX_LENGTH;
 		int posY = (int)unit.getPosition().getY()/BOX_LENGTH;
-		
+		vTable.set(this.state.getValue(),true);
 		String action_str = ""; //aux variable to print the action taken
 		
 		StarcraftAction sc_action = (StarcraftAction)action;
@@ -67,6 +70,29 @@ public class StarcraftEnvironment implements Environment{
 			 posX--;
 			 action_str = "IZQUIERDA";
 		     break;
+		     
+		 case MOVE_UP_LEFT: 
+			 posY--;
+			 posX--;
+			 action_str = "ARRIBA-IZQUIERDA";
+		     break;
+		 case MOVE_UP_RIGHT: 
+			 posX++;
+			 posY--;
+			 action_str = "ARRIBA-DERECHA";
+		     break;
+		 case MOVE_DOWN_LEFT:
+			 posY++;
+			 posX--;
+			 action_str = "ABAJO-IZQUIERDA";
+		     break;
+		 case MOVE_DOWN_RIGHT:
+			 posX++;
+			 posY++;
+			 action_str = "ABAJO-DERECHA";
+		     break;
+		         
+		     
 		 default: 
 			 
 			 break;
@@ -83,6 +109,10 @@ public class StarcraftEnvironment implements Environment{
 			state = new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
 			if(isFinalState()) {
 				reward = 1000;
+			}
+			if(vTable.get(state.getValue())){
+				reward = -1;
+				System.out.println("REPETIDO");
 			}
 		} else {
 			reward = -100;
@@ -113,6 +143,7 @@ public class StarcraftEnvironment implements Environment{
 	
 	@Override
 	public void reset() {
+		vTable.clear();
 		// TODO Auto-generated method stub
 		game.restartGame();
 	}
