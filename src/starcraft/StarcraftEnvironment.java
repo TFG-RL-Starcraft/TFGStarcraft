@@ -45,8 +45,9 @@ public class StarcraftEnvironment implements Environment{
 	@Override
 	public double execute(Action action) {
 		
-		double reward = 0;
-		 
+		double reward = 1.0;
+		if(!unit.exists())
+			return -1000;
 		// Current position
 		int posX = (int)unit.getPosition().getX()/BOX_LENGTH;
 		int posY = (int)unit.getPosition().getY()/BOX_LENGTH;
@@ -112,7 +113,7 @@ public class StarcraftEnvironment implements Environment{
 				reward = 1000;
 			}
 			if(vTable.get(state.getValue())){
-			//	reward = -1;
+				reward = 0;
 			}
 		} else {
 			reward = -100;
@@ -165,7 +166,7 @@ public class StarcraftEnvironment implements Environment{
 			// Check if collide with other units
 			while(dontCol && i < game.getAllUnits().size()){
 				m = game.getAllUnits().get(i);
-				if(itsInside(m.getTop(),m.getBottom(),m.getRight(),m.getLeft(), x*BOX_LENGTH+(BOX_LENGTH/2), y*BOX_LENGTH+(BOX_LENGTH/2))) {
+				if(!m.getType().isBeacon() && itsInside(m.getTop(),m.getBottom(),m.getRight(),m.getLeft(), x*BOX_LENGTH+(BOX_LENGTH/2), y*BOX_LENGTH+(BOX_LENGTH/2))) {
 					return null;
 				}
 				i++;

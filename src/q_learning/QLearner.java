@@ -45,11 +45,17 @@ public class QLearner {
 			newValue = Math.max(0, newValue); //TODO, ver si tiene sentido este max
 			qTable.set(state, action, newValue);	
 			
-			if(environment.isFinalState() || numIter>=maxNumIter){
-				Log.printLog("log.txt", Integer.toString(numIter));
+			if(environment.isFinalState() || numIter>=maxNumIter ){
+				//reward = -1 ha muerto
+				if( reward ==-1000 )
+					Log.printLog("log.txt", "dead");
+				else
+					Log.printLog("log.txt", Integer.toString(numIter));
 				numIter=0;
 				environment.reset();
 			}
+			
+	
 			numIter++;
 		}
 		

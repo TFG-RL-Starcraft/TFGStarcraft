@@ -21,9 +21,10 @@ public class Main_Starcraft{
     private Game game;
     private Unit marine;
     private Player self;
+    private Player enemy;
     private QLearner q;
     private QPlayer qp;
-    private int maxIter = 500;
+    private int maxIter = 1500;
     
     private static int numExper; //number of experiments
 
@@ -39,7 +40,18 @@ public class Main_Starcraft{
                 game = mirror.getGame();
                 self = game.self();
                 
-               
+                System.out.println(game.enemies().size());
+                Player p1 = game.enemies().get(0);
+                System.out.println("alberto  " + p1.getUnits().size());
+
+              /*  for(Player p : game.enemies()){
+                	if(p.getUnits().size()>0)
+                	{
+                		enemy = p;
+                	}
+                }
+                
+                System.out.println("numero enemigos " + enemy.getUnits().get(0).getType().toString());*/
 //                Log.printLog("log.txt", Integer.toString(numIter));
                 
                 //Use BWTA to analyze map
@@ -55,11 +67,13 @@ public class Main_Starcraft{
 //						+ marine.getPosition().getY() / 32);
 				
 				// INICIO - Crear estado final
-                Region meta = game.getRegionAt(15, 15);
-                //System.out.println(meta.getBoundsLeft() + " " + meta.getBoundsRight() + " " + meta.getBoundsTop() + " " + meta.getBoundsBottom());
+                
+                Position p = getBaliza();
+                State ls = new StarcraftState((int)p.getX()/32, (int)p.getY()/32, game.mapWidth(), game.mapHeight());
+                
                 // FIN - Crear estado
                 
-				State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
+				//State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
 				Environment e = new StarcraftEnvironment(game, marine, ls);
 				
 				QTable qT = IO_QTable.leerTabla("qtabla.txt");
@@ -69,7 +83,7 @@ public class Main_Starcraft{
 				q = new QLearner(e, qT, StarcraftAction.MOVE_UP,maxIter);
 				qp = new QPlayer(e, qT);
 				
-			//	game.setLocalSpeed(0);
+			 	game.setLocalSpeed(00);
 				//game.setGUI(false);
 				
                 //game.enableFlag(1); 	// This command allows you to manually control the units during the game.
@@ -105,10 +119,11 @@ public class Main_Starcraft{
                 
                 
                 //if some action is done
-                //q.step(); 	//qLearner
+                	q.step(); 	//qLearner
+                	
            
                         
-                qp.step(); 	//qPlayer
+                //qp.step(); 	//qPlayer
             }
             
 	        @Override
@@ -133,6 +148,16 @@ public class Main_Starcraft{
 				marine = myUnit;
 			}
 		}
+	}
+    
+    private Position getBaliza() {
+    	Position p = null;
+		for (Unit myUnit : self.getUnits()) {
+			if (myUnit.getType().isBeacon()) {
+				p = myUnit.getPosition();
+			}
+		}
+		return p;
 	}
     
     public static void main(String... args) {   
