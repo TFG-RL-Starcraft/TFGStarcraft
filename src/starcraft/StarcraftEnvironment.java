@@ -116,7 +116,7 @@ public class StarcraftEnvironment implements Environment{
 					reward = 0;
 				}
 			} else { //is not a valid move
-				reward = -100;
+				reward = -10;
 			}
 		} else { //if the unit doesn't exist (lost game)
 			reward = -1;

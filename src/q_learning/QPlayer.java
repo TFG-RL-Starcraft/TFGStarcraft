@@ -17,7 +17,7 @@ public class QPlayer {
 	{     
 		Action action = null;
 		
-		if(environment.stateHasChanged()) {
+		if(environment.stateHasChanged() && !environment.isFinalState()) {
 			State state = environment.state();
 	
 			// Choose action

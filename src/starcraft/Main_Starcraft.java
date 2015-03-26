@@ -41,7 +41,7 @@ public class Main_Starcraft{
                 game = mirror.getGame();
                 self = game.self();
                 
-                Player p1 = game.enemies().get(0);
+                //Player p1 = game.enemies().get(0); //esto hace que no funcione si no encuentra ningún enemigo ¡¡¡TENER CUIDADO!!!
 
               /*  for(Player p : game.enemies()){
                 	if(p.getUnits().size()>0)
