@@ -147,12 +147,6 @@ public class StarcraftEnvironment implements Environment{
 	private boolean hasLost() {
 		return !unit.exists();
 	}
-	
-	private State getRealState() {
-		int posX = (int)unit.getPosition().getX()/BOX_LENGTH;
-		int posY = (int)unit.getPosition().getY()/BOX_LENGTH;
-		return new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
-	}
 
 	@Override
 	public boolean stateHasChanged() {		
