@@ -46,77 +46,80 @@ public class StarcraftEnvironment implements Environment{
 	public double execute(Action action) {
 		
 		double reward = 1.0;
-		if(!unit.exists())
-			return -1000;
-		// Current position
-		int posX = (int)unit.getPosition().getX()/BOX_LENGTH;
-		int posY = (int)unit.getPosition().getY()/BOX_LENGTH;
-		vTable.set(this.state.getValue(),true);
-		String action_str = ""; //aux variable to print the action taken
-		
-		StarcraftAction sc_action = (StarcraftAction)action;
-		switch(sc_action) {
-		 case MOVE_UP: 
-			 posY--;
-			 action_str = "ARRIBA";
-		     break;
-		 case MOVE_RIGHT: 
-			 posX++;
-			 action_str = "DERECHA";
-		     break;
-		 case MOVE_DOWN:
-			 posY++;
-			 action_str = "ABAJO";
-		     break;
-		 case MOVE_LEFT:
-			 posX--;
-			 action_str = "IZQUIERDA";
-		     break;
-		     
-		 case MOVE_UP_LEFT: 
-			 posY--;
-			 posX--;
-			 action_str = "ARRIBA-IZQUIERDA";
-		     break;
-		 case MOVE_UP_RIGHT: 
-			 posX++;
-			 posY--;
-			 action_str = "ARRIBA-DERECHA";
-		     break;
-		 case MOVE_DOWN_LEFT:
-			 posY++;
-			 posX--;
-			 action_str = "ABAJO-IZQUIERDA";
-		     break;
-		 case MOVE_DOWN_RIGHT:
-			 posX++;
-			 posY++;
-			 action_str = "ABAJO-DERECHA";
-		     break;
-		         
-		     
-		 default: 
-			 
-			 break;
-		}
-		
-		// Here we move the units or execute the actions.	 
-		// Later is a "switch" evaluating if the new State/Action would have a good/bad Reward
-		// Here you must enter all the rewards of learning
-		Position p = isValid(posX, posY);
-		
-		if (p != null) {
-			unit.move(p);
+
+		if(!hasLost()) {
+			// Current position
+			int posX = (int)unit.getPosition().getX()/BOX_LENGTH;
+			int posY = (int)unit.getPosition().getY()/BOX_LENGTH;
+			vTable.set(this.state.getValue(),true);
+			String action_str = ""; //aux variable to print the action taken
 			
-			state = new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
-			if(isFinalState()) {
-				reward = 1000;
+			StarcraftAction sc_action = (StarcraftAction)action;
+			switch(sc_action) {
+			 case MOVE_UP: 
+				 posY--;
+				 action_str = "ARRIBA";
+			     break;
+			 case MOVE_RIGHT: 
+				 posX++;
+				 action_str = "DERECHA";
+			     break;
+			 case MOVE_DOWN:
+				 posY++;
+				 action_str = "ABAJO";
+			     break;
+			 case MOVE_LEFT:
+				 posX--;
+				 action_str = "IZQUIERDA";
+			     break;
+			     
+			 case MOVE_UP_LEFT: 
+				 posY--;
+				 posX--;
+				 action_str = "ARRIBA-IZQUIERDA";
+			     break;
+			 case MOVE_UP_RIGHT: 
+				 posX++;
+				 posY--;
+				 action_str = "ARRIBA-DERECHA";
+			     break;
+			 case MOVE_DOWN_LEFT:
+				 posY++;
+				 posX--;
+				 action_str = "ABAJO-IZQUIERDA";
+			     break;
+			 case MOVE_DOWN_RIGHT:
+				 posX++;
+				 posY++;
+				 action_str = "ABAJO-DERECHA";
+			     break;
+			         
+			     
+			 default: 
+				 
+				 break;
 			}
-			if(vTable.get(state.getValue())){
-				reward = 0;
+			
+			// Here we move the units or execute the actions.	 
+			// Later is a "switch" evaluating if the new State/Action would have a good/bad Reward
+			// Here you must enter all the rewards of learning
+			Position p = isValid(posX, posY);
+			
+			if (p != null) {
+				unit.move(p);
+				
+				state = new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
+				if(isFinalState()) {
+					reward = 1000;
+				}
+				if(vTable.get(state.getValue())){
+					reward = 0;
+				}
+			} else { //is not a valid move
+				reward = -100;
 			}
-		} else {
-			reward = -100;
+		} else { //if the unit doesn't exist (lost game)
+			reward = -1;
 		}
 
 		return reward;
@@ -134,18 +137,32 @@ public class StarcraftEnvironment implements Environment{
 
 	@Override
 	public boolean isFinalState() {
+		return hasWon() || hasLost();
+	}
+	
+	private boolean hasWon() {
 		return state.getValue() == finalState.getValue();
+	}
+	
+	private boolean hasLost() {
+		return !unit.exists();
+	}
+	
+	private State getRealState() {
+		int posX = (int)unit.getPosition().getX()/BOX_LENGTH;
+		int posY = (int)unit.getPosition().getY()/BOX_LENGTH;
+		return new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
 	}
 
 	@Override
-	public boolean stateHasChanged() {
-		return !unit.isMoving();
+	public boolean stateHasChanged() {		
+		return !unit.isMoving();	
 	}
 	
 	@Override
 	public void reset() {
+		game.pauseGame();
 		vTable.clear();
-		// TODO Auto-generated method stub
 		game.restartGame();
 	}
 	

@@ -25,6 +25,7 @@ public class Main_Starcraft{
     private QLearner q;
     private QPlayer qp;
     private int maxIter = 1500;
+    int numberOfFrames = 0;
     
     private static int numExper; //number of experiments
 
@@ -40,9 +41,7 @@ public class Main_Starcraft{
                 game = mirror.getGame();
                 self = game.self();
                 
-                System.out.println(game.enemies().size());
                 Player p1 = game.enemies().get(0);
-                System.out.println("alberto  " + p1.getUnits().size());
 
               /*  for(Player p : game.enemies()){
                 	if(p.getUnits().size()>0)
@@ -83,47 +82,30 @@ public class Main_Starcraft{
 				q = new QLearner(e, qT, StarcraftAction.MOVE_UP,maxIter);
 				qp = new QPlayer(e, qT);
 				
-			 	game.setLocalSpeed(00);
+			 	game.setLocalSpeed(0);
 				//game.setGUI(false);
 				
                 //game.enableFlag(1); 	// This command allows you to manually control the units during the game.
                 						//Is incompatible with the "game.setGUI(false)" command
-				
-				
+
             }
-            
-/*            private void remakeGame(){
-            	Log.printLog("log.txt", Integer.toString(numIter));
-            	getMarine();            	
-            	numIter = 0;
-            	numExper++;
-            	game.restartGame();
-            	
-            	State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
-				Environment e = new StarcraftEnvironment(game, marine, ls);
-				
-				QTable qT = q.qTable();
-				q = new QLearner(e, qT, StarcraftAction.MOVE_UP);
-				qp = new QPlayer(e, qT);
-            }*/
- 
+
             @Override
             public void onFrame() {
                 game.setTextSize(10);
                 game.drawTextScreen(10, 10, "Playing as " + self.getName() + " - " + self.getRace());
-                                
-                if(numExper==200){
-                	IO_QTable.escribirTabla(q.qTable(), "qtabla.txt");
-                	game.leaveGame();
+
+        		numberOfFrames++;
+                //the "average" FPS is 500 in gamespeed=0, 1000 in NoGUI, and 18/19 in normal speed, 
+        		//so call the step method each 5 frames (in these 5 frames, the state would be almost the same)
+                if(numberOfFrames >= 5)
+                {
+        			q.step(); 	//qLearner
+                	//qp.step(); 	//qPlayer
+        			
+                	numberOfFrames = 0;
                 }
-                
-                
-                //if some action is done
-                	q.step(); 	//qLearner
-                	
-           
-                        
-                //qp.step(); 	//qPlayer
+
             }
             
 	        @Override
@@ -134,6 +116,10 @@ public class Main_Starcraft{
 	    		time_end = System.currentTimeMillis();	    		
 	            System.out.println("The Experiment " + numExper + " has taken "+ ( time_end - time_start ) +" milliseconds");  
 	            numExper++;
+	            
+	            if(numExper == 2){
+                	game.leaveGame();
+                }
 	        }  
             
             

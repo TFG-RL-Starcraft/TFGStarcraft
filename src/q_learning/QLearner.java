@@ -6,8 +6,7 @@ import entrada_salida.Log;
 public class QLearner {
 
 	private static double ALPHA = 0.2; //learning rate -> what extent the newly acquired information will override the old information
-	private static double GAMMA = 0.5; //discount factor -> importance to future rewards
-	private static double RANDOM_ACTION_PROB = 0.1;
+	private static double GAMMA = 0.9; //discount factor -> importance to future rewards
 	
 	private Environment environment;
 	private QTable qTable;
@@ -15,7 +14,7 @@ public class QLearner {
 	private int numIter;
 	private int maxNumIter;
 		
-	public QLearner(Environment environment, QTable qTable, Action action,int maxNumIter)
+	public QLearner(Environment environment, QTable qTable, Action action, int maxNumIter)
 	{
 		this.environment = environment;
 		this.qTable = qTable;
@@ -30,6 +29,7 @@ public class QLearner {
 		Action action = null;		
 		
 		if(environment.stateHasChanged()) {
+			
 			State state = environment.state();
 	
 			// Choose action
@@ -45,18 +45,24 @@ public class QLearner {
 			newValue = Math.max(0, newValue); //TODO, ver si tiene sentido este max
 			qTable.set(state, action, newValue);	
 			
-			if(environment.isFinalState() || numIter>=maxNumIter ){
-				//reward = -1 ha muerto
-				if( reward ==-1000 )
+			if(environment.isFinalState() || numIter >= maxNumIter ){				
+				//este if/else es sólo para debug
+				if( reward == -1 && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
+				{
 					Log.printLog("log.txt", "dead");
+				}
 				else
+				{
 					Log.printLog("log.txt", Integer.toString(numIter));
-				numIter=0;
+				}
+								
 				environment.reset();
+				numIter = 0;
+			} else {
+				
+				numIter++;
 			}
-			
-	
-			numIter++;
+		
 		}
 		
 		return action;
