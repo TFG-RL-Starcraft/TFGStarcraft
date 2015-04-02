@@ -1,5 +1,7 @@
 package starcraft;
 
+import java.util.ArrayList;
+
 import entrada_salida.Log;
 import q_learning.Action;
 import q_learning.Environment;
@@ -16,15 +18,18 @@ public class StarcraftEnvironment implements Environment{
 	private Game game;
 	private Unit unit;
 	private State state;
-	private State finalState;
+	private ArrayList<Integer> finalState; //array with the hash values of all possible final states 
 	private VisitedStateTable vTable;
 	
-	public StarcraftEnvironment(Game game, Unit unit, State finalState) {
+	public StarcraftEnvironment(Game game, Unit unit, ArrayList<State> finalStates) {
 		this.game = game;
 		this.unit = unit;
 		this.state = new StarcraftState((int)unit.getPosition().getX()/BOX_LENGTH, 
 				(int)unit.getPosition().getY()/BOX_LENGTH, game.mapWidth(), game.mapHeight());
-		this.finalState = finalState;
+		this.finalState = new ArrayList<Integer>();
+		for(State sta : finalStates) {
+			finalState.add(sta.getValue());
+		}		
 		vTable = new VisitedStateTable(numStates());
 	}
 	
@@ -45,7 +50,7 @@ public class StarcraftEnvironment implements Environment{
 	@Override
 	public double execute(Action action) {
 		
-		double reward = 1.0;
+		double reward = 0; //this value could be 0.001 or very small values
 
 		if(!hasLost()) {
 			// Current position
@@ -110,7 +115,7 @@ public class StarcraftEnvironment implements Environment{
 				
 				state = new StarcraftState(posX, posY, game.mapWidth(), game.mapHeight());
 				if(isFinalState()) {
-					reward = 1000;
+					reward = 100000;
 				}
 				if(vTable.get(state.getValue())){
 					reward = 0;
@@ -129,11 +134,6 @@ public class StarcraftEnvironment implements Environment{
 	public State state() {
 		return state;
 	}
-	
-	@Override
-	public State finalState() {
-		return finalState;
-	}
 
 	@Override
 	public boolean isFinalState() {
@@ -141,7 +141,7 @@ public class StarcraftEnvironment implements Environment{
 	}
 	
 	private boolean hasWon() {
-		return state.getValue() == finalState.getValue();
+		return finalState.contains(state.getValue());
 	}
 	
 	private boolean hasLost() {

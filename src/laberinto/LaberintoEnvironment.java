@@ -87,11 +87,6 @@ public class LaberintoEnvironment implements Environment{
 	}
 
 	@Override
-	public State finalState() {
-		return lastState;
-	}
-
-	@Override
 	public boolean isFinalState() {
 		return state.getValue() == lastState.getValue();
 	}

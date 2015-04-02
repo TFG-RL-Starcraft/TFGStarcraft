@@ -297,7 +297,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     private void imprimeMejorCamino() {
     	LimpiarTablero();
     	env.reset();
-    	QPlayer qp = new QPlayer(env, qT);
+    	QPlayer qp = new QPlayer(env, qT, LaberintoAction.MOVE_UP);
 
     	//Ejecuta el player hasta llegar a la meta
         while(!env.isFinalState())

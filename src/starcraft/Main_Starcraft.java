@@ -1,4 +1,6 @@
 package starcraft;
+import java.util.ArrayList;
+
 import entrada_salida.IO_QTable;
 import entrada_salida.Log;
 import q_learning.Action;
@@ -15,6 +17,7 @@ import bwta.*;
 public class Main_Starcraft{
 
 	private static long time_start, time_end;
+	private int MAX_ITER = 5000;
 	
     private Mirror mirror = new Mirror();
 
@@ -23,8 +26,7 @@ public class Main_Starcraft{
     private Player self;
     private Player enemy;
     private QLearner q;
-    private QPlayer qp;
-    private int maxIter = 1500;
+    private QPlayer qp;    
     int numberOfFrames = 0;
     
     private static int numExper; //number of experiments
@@ -65,22 +67,27 @@ public class Main_Starcraft{
 //				System.out.println("MarineX: " + marine.getPosition().getX() / 32 + " MarineY: "
 //						+ marine.getPosition().getY() / 32);
 				
-				// INICIO - Crear estado final
+				// INICIO - Crear estados finales
                 
-                Position p = getBaliza();
-                State ls = new StarcraftState((int)p.getX()/32, (int)p.getY()/32, game.mapWidth(), game.mapHeight());
+                ArrayList<State> finalStateList = new ArrayList<State>();
+                ArrayList<Position> positions = getBalizas();
+                
+                for(Position p: positions) {
+	                State finalState = new StarcraftState((int)p.getX()/32, (int)p.getY()/32, game.mapWidth(), game.mapHeight());
+	                finalStateList.add(finalState);
+                }
                 
                 // FIN - Crear estado
                 
 				//State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
-				Environment e = new StarcraftEnvironment(game, marine, ls);
+				Environment e = new StarcraftEnvironment(game, marine, finalStateList);
 				
 				QTable qT = IO_QTable.leerTabla("qtabla.txt");
 				if(qT == null) {
 					qT = new QTable_Array(e.numStates(), e.numActions(), StarcraftAction.MOVE_UP);
 				}
-				q = new QLearner(e, qT, StarcraftAction.MOVE_UP,maxIter);
-				qp = new QPlayer(e, qT);
+				q = new QLearner(e, qT, StarcraftAction.MOVE_UP,MAX_ITER);
+				qp = new QPlayer(e, qT, StarcraftAction.MOVE_UP);
 				
 			 	game.setLocalSpeed(0);
 				//game.setGUI(false);
@@ -136,11 +143,11 @@ public class Main_Starcraft{
 		}
 	}
     
-    private Position getBaliza() {
-    	Position p = null;
+    private ArrayList<Position> getBalizas() {
+    	ArrayList<Position> p = new ArrayList<Position>();
 		for (Unit myUnit : self.getUnits()) {
 			if (myUnit.getType().isBeacon()) {
-				p = myUnit.getPosition();
+				p.add(myUnit.getPosition());
 			}
 		}
 		return p;

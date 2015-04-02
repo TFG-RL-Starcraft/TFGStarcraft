@@ -21,9 +21,6 @@ public interface Environment {
 	// Returns current state
 	public State state();
 	
-	// Last state
-	public State finalState();
-	
 	// Current state is final?
 	public boolean isFinalState();
 	
