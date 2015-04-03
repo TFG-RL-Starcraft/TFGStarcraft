@@ -16,17 +16,26 @@ public interface Environment {
 	
 	// Executes an action in the current state
 	// Returns the reward
-	public double execute(Action action);
+	public void execute(Action action);
 	
 	// Returns current state
 	public State state();
+	
+	// Returns previous state
+	public State previousState();
+	
+	// Returns previous action taken
+	public Action previousAction();
 	
 	// Current state is final?
 	public boolean isFinalState();
 	
 	// The current state has changed from the previous one
-	public boolean stateHasChanged();
-		
+	public boolean stateHasChanged();		
+
+	// Get the reward of a given state
+	public double getReward(State state);
+	
 	// Reset to initial world state
 	public void reset();
 

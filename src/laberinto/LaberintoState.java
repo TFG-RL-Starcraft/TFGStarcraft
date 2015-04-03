@@ -16,11 +16,11 @@ public class LaberintoState extends Casilla implements State{
         this.height = height;
     }
     
-    public LaberintoState(Casilla c)
+    public LaberintoState(Casilla c, int width, int height)
     { 
     	super(c);
-    	this.width = c.getWidth();
-    	this.height = c.getHeight();
+    	this.width = width;
+    	this.height = height;
     }
     
     public int getWidth()

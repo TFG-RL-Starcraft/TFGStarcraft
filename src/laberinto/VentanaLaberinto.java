@@ -7,15 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
 
+import laberinto.actions.LaberintoActionManager;
 import q_learning.Environment;
 import q_learning.QLearner;
 import q_learning.QPlayer;
 import q_learning.QTable;
 import q_learning.QTable_Array;
-import q_learning.State;
-import starcraft.StarcraftAction;
 
 @SuppressWarnings("serial")
 public class VentanaLaberinto extends javax.swing.JFrame {
@@ -31,9 +29,14 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int INICIO = 2;
     public static final int META = 3;
     
+    public static final int NUM_MAX_ITER = 2000;
+    
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
     private Casilla salida;
-    private Casilla meta;   
+    private Casilla meta;  
+    
+    private LaberintoState estado_actual;
+    private boolean terminado;
     
     private QLearner q; //guarda la referencia a toda la estructura del ejercicio
     private Environment env;
@@ -91,13 +94,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         this.setSize(800, 600);
         
         generarLaberinto();
-        /*
-        LaberintoState casilla_incial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
-        LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
-        Environment e = new LaberintoEnvironment(this, maxX, maxY, casilla_incial, casilla_final);
-        QTable qT = new QTable_Array(maxX, maxY, LaberintoAction.MOVE_UP);        
-        q = new QLearner(e, qT, LaberintoAction.MOVE_UP); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
-        */
+
     }
 
     
@@ -105,17 +102,15 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         long start = System.currentTimeMillis();
         
         //Repetir este experimento num_iter veces
-        int num_iter = 100;
-        for(int i=0; i<num_iter; i++)
+        int num_experimento = 500;
+        for(int i=0; i<num_experimento; i++)
         {
-        	//Reinicia los valores de Inicio y final
-        	env.reset();
-        	
         	//Ejecuta el experimento hasta llegar a la meta
-	        while(!env.isFinalState())
-	        {
-	        	q.step();
-	        }
+        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
+        		//Tenemos que definir de alguna forma un bucle "infinito"
+        	terminado = false;
+        	while(!terminado)
+        		q.step();
         }
         
         long end = System.currentTimeMillis();
@@ -136,11 +131,13 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
 
     private void InicializarQLearner() {
-    	LaberintoState casilla_incial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
+    	LaberintoState casilla_inicial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
-        env = new LaberintoEnvironment(this, maxX, maxY, casilla_incial, casilla_final);
-        qT = new QTable_Array(env.numStates(), env.numActions(), LaberintoAction.MOVE_UP);        
-        q = new QLearner(env, qT, LaberintoAction.MOVE_UP,2000); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
+        this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
+        PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY);
+        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final);
+        qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
+        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_MAX_ITER); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
 	}
 
@@ -297,12 +294,12 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     private void imprimeMejorCamino() {
     	LimpiarTablero();
     	env.reset();
-    	QPlayer qp = new QPlayer(env, qT, LaberintoAction.MOVE_UP);
+    	QPlayer qp = new QPlayer(env, qT, new LaberintoActionManager());
 
     	//Ejecuta el player hasta llegar a la meta
         while(!env.isFinalState())
         {
-        	qp.step();       	
+        	qp.step(false);       	
         }	
 	}
 
@@ -334,6 +331,22 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
 	public void mover(int posX, int posY) {
 		tablero[posX][posY].setBackground(Color.yellow);
+		estado_actual = new LaberintoState(posX, posY, maxX, maxY); 
+	}
+
+
+	public LaberintoState getEstadoActual() {
+		return estado_actual;
+	}
+
+
+	public void setEstadoActual(LaberintoState State) {
+		this.estado_actual = State;
+	}
+
+
+	public void setTerminado(boolean b) {
+		this.terminado = b;
 	}
     
 }

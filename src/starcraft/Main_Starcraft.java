@@ -2,16 +2,14 @@ package starcraft;
 import java.util.ArrayList;
 
 import entrada_salida.IO_QTable;
-import entrada_salida.Log;
-import q_learning.Action;
 import q_learning.Environment;
 import q_learning.QLearner;
 import q_learning.QPlayer;
 import q_learning.QTable;
 import q_learning.QTable_Array;
 import q_learning.State;
+import starcraft.actions.StarcraftActionManager;
 import bwapi.*;
-import bwapi.Region;
 import bwta.*;
 
 public class Main_Starcraft{
@@ -24,7 +22,7 @@ public class Main_Starcraft{
     private Game game;
     private Unit marine;
     private Player self;
-    private Player enemy;
+    //private Player enemy;
     private QLearner q;
     private QPlayer qp;    
     int numberOfFrames = 0;
@@ -61,8 +59,12 @@ public class Main_Starcraft{
                 BWTA.readMap();
                 BWTA.analyze();
                 
-                getMarine();
+                marine = getMarine();
                 System.out.println("Map data ready");
+                
+              //Inicializa Presentador ----------------------------------------------------------------------------
+				Presenter.setInstance(game, marine, 32, new StarcraftActionManager());
+                
 //                System.out.println("HEIGHT: " + game.mapHeight() + " WIDTH: " + game.mapWidth());
 //				System.out.println("MarineX: " + marine.getPosition().getX() / 32 + " MarineY: "
 //						+ marine.getPosition().getY() / 32);
@@ -84,10 +86,12 @@ public class Main_Starcraft{
 				
 				QTable qT = IO_QTable.leerTabla("qtabla.txt");
 				if(qT == null) {
-					qT = new QTable_Array(e.numStates(), e.numActions(), StarcraftAction.MOVE_UP);
+					qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
 				}
-				q = new QLearner(e, qT, StarcraftAction.MOVE_UP,MAX_ITER);
-				qp = new QPlayer(e, qT, StarcraftAction.MOVE_UP);
+				q = new QLearner(e, qT, new StarcraftActionManager(),MAX_ITER);
+				qp = new QPlayer(e, qT, new StarcraftActionManager());
+				
+				
 				
 			 	game.setLocalSpeed(0);
 				//game.setGUI(false);
@@ -108,7 +112,8 @@ public class Main_Starcraft{
                 if(numberOfFrames >= 5)
                 {
         			q.step(); 	//qLearner
-                	//qp.step(); 	//qPlayer
+                	//qp.step(true); 	//qPlayer "RANDOM" (probabilistic)
+                	//qp.step(false); //qPlayer "FIXED" (most valued action)
         			
                 	numberOfFrames = 0;
                 }
@@ -135,12 +140,13 @@ public class Main_Starcraft{
         mirror.startGame();
     }
     
-    private void getMarine() {
+    private Unit getMarine() {
 		for (Unit myUnit : self.getUnits()) {
 			if (myUnit.getType() == UnitType.Terran_Marine) {
-				marine = myUnit;
+				return myUnit;
 			}
 		}
+		return null;
 	}
     
     private ArrayList<Position> getBalizas() {

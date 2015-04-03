@@ -2,7 +2,7 @@ package q_learning;
 
 public class VisitedStateTable {
 
-	private boolean[] visited;
+	/*private boolean[] visited;
 	
 	public VisitedStateTable(int numStates) {
 		visited = new boolean[numStates];
@@ -25,5 +25,5 @@ public class VisitedStateTable {
 
 	public void set(int state,boolean visit) {
 		visited[state] = visit;
-	}
+	}*/
 }

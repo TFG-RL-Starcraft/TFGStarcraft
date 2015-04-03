@@ -1,16 +1,28 @@
 package q_learning;
 
+
 /**
- * Enum containing the possible actions in each state
  * Every action will have a value, which will be used to index the Qtable
  *
  */
-public interface Action {
+public abstract class Action {
 
-	// The index value
-	public int getValue();
+	//Action value
+    private final int value;
 	
-	// Return a determinate Action
-	public Action get(int value);
+    protected Action(int value) { 
+        this.value = value;
+	}
+	
+    // The index value
+	public int getValue() {
+		return this.value;
+	}
+
+	// Configure the context to easily execute the action
+	public abstract void configureContext();
+	
+	// Execute the Action
+	public abstract void execute();
 	
 }

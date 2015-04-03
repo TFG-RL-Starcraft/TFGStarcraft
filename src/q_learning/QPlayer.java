@@ -5,17 +5,18 @@ public class QPlayer {
 
 	private Environment environment;
 	private QTable qTable;
-	private Action action;
+	private ActionManager actionManager;
 	
-	public QPlayer(Environment environment, QTable qTable, Action action)
+	public QPlayer(Environment environment, QTable qTable, ActionManager actionManager)
 	{
 		this.environment = environment;
 		this.qTable = qTable;
-		this.action = action;
+		this.actionManager = actionManager;
 	}
 	
 	// Executes one step in the learning process
-	public Action step()
+	// "ramdom_choice" is the behavior in the choice of the next movement (the longest value, or taken a random possibility)
+	public Action step(boolean random_choice)
 	{     
 		Action action = null;
 		
@@ -23,7 +24,7 @@ public class QPlayer {
 			State state = environment.state();
 	
 			// Choose action
-			action = getAction(state);
+			action = getAction(state, random_choice);
 	
 			// Execute action
 			environment.execute(action);
@@ -33,25 +34,28 @@ public class QPlayer {
 	}
 	
 	// Choose the best valued action between possible
-	private Action getAction(State state) {
+	private Action getAction(State state, boolean random_choice) {
 
-		return qTable.bestAction(state);
-		/*
-		double total = 0;
-		for (int a = 0; a<environment.numActions(); a++) {
-			total += qTable.get(state, a);
+		if(!random_choice) {
+			return qTable.bestAction(state);
+			
+		} else {			
+			double total = 0;
+			for (int a = 0; a<environment.numActions(); a++) {
+				total += qTable.get(state, a);
+			}
+	
+			double random = Math.random() * total;
+	
+			total = 0;
+			for (int a = 0; a<environment.numActions(); a++) {
+				total += qTable.get(state, a);
+				if (total >= random)
+					return actionManager.get(a);
+			}
+	
+			return null;
 		}
-
-		double random = Math.random() * total;
-
-		total = 0;
-		for (int a = 0; a<environment.numActions(); a++) {
-			total += qTable.get(state, a);
-			if (total >= random)
-				return action.get(a);
-		}
-
-		return null;*/
 	}
 	
 }
