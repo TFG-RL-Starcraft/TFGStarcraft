@@ -13,21 +13,15 @@ public abstract class StarcraftAction extends Action{
 	}
 
 	//auxiliary methods and variables for execute()
-	private Game game;
-    private Unit unit;
+	protected Game game;
+	protected Unit unit;
+    protected int box_size;
 	
     // Implement the configureContext() method here because it's the same for all the Actions
 	public void configureContext() {
 		this.game = Presenter.getInstance().getGame();
 		this.unit = Presenter.getInstance().getUnit();
-	}
-	
-	public Game getGame() {
-		return this.game;
-	}
-	
-	public Unit getUnit() {
-		return this.unit;
+		this.box_size = Presenter.getInstance().getBoxSize();
 	}
 	
 	/**
