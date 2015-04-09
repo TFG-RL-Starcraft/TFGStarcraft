@@ -19,8 +19,8 @@ import q_learning.QTable_Array;
 public class VentanaLaberinto extends javax.swing.JFrame {
 	
 	//Variables creadas por mí, para generar la ventana
-    public static final int xboton = 30; //ancho y alto de las celdas
-    public static final int yboton = 30;
+    public static final int xboton = 10; //ancho y alto de las celdas
+    public static final int yboton = 10;
     public static final int xInicio = 150; //posicio de comienzo del tablero
     public static final int yInicio = 50;
     
