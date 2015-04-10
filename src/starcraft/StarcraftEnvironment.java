@@ -9,8 +9,6 @@ import bwapi.Game;
 import bwapi.Unit;
 
 public class StarcraftEnvironment implements Environment{
-
-	private static int BOX_LENGTH = 32;
 	
 	private Game game;
 	private Unit unit;
@@ -55,8 +53,8 @@ public class StarcraftEnvironment implements Environment{
 
 	@Override
 	public State state() {
-		return new StarcraftState((int)unit.getPosition().getX()/BOX_LENGTH, 
-				(int)unit.getPosition().getY()/BOX_LENGTH, game.mapWidth(), game.mapHeight());
+		return new StarcraftState((int)unit.getPosition().getX()/Presenter.getInstance().getBoxSize(), 
+				(int)unit.getPosition().getY()/Presenter.getInstance().getBoxSize(), game.mapWidth(), game.mapHeight());
 	}
 
 	@Override
@@ -89,11 +87,14 @@ public class StarcraftEnvironment implements Environment{
 	
 	@Override
 	public double getReward(State state) {
-		
 		double reward = 0; //this value could be 0.001 or very small values
-			
-		// Here you must enter all the rewards of learning
 		
+		//If the current distance to the final is bigger than the future increase the reward
+		if(getCloser(state.getValue()))
+			reward = 10;
+		
+		//System.out.println(reward);
+		// Here you must enter all the rewards of learning
 		if(hasWon()) { //if the unit reaches the goal
 			reward = 1000;
 		} else if(hasLost()) { //if the unit doesn't exist (lost game)
@@ -115,5 +116,37 @@ public class StarcraftEnvironment implements Environment{
 		//vTable.clear();
 		game.restartGame();
 	}
+	
+	private boolean getCloser(int newState){
+		boolean reachingEnd = false;
+			
+		if(previousState != null){
+			double currentDist = euclideanDist(previousState().getValue());
+			double futureDist = euclideanDist(newState);
+			
+			if(currentDist>futureDist) 
+				reachingEnd = true;
+		}
+		
+		return reachingEnd;
+	}
+	
+	private double euclideanDist(int newState){
+		double dist = Double.MAX_VALUE;
+		int actualY = (int)(newState /  game.mapHeight());
+		int actualX = newState % game.mapWidth();
+		
+		for(int i = 0; i < finalState.size(); i++){					
+			int futureY = (int)(finalState.get(i) /  game.mapHeight());
+			int futureX = finalState.get(i) % game.mapWidth();
+			int x1 = Math.abs(actualY -  futureY);
+			int x2 = Math.abs(actualX -  futureX);
+			double x = Math.sqrt((Math.pow(x1, 2) + Math.pow(x2, 2)));
+			if(x<dist){
+				dist = x;
+			}
+		}
+		return dist;
+    }
 
 }
