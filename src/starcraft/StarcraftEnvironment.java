@@ -33,6 +33,10 @@ public class StarcraftEnvironment implements Environment{
 		//vTable = new VisitedStateTable(numStates());
 	}
 	
+	public int[][] getVisitTable(){
+		return null;
+	}
+	
 	@Override
 	public int numStates() {
 		return game.mapHeight() * game.mapWidth();

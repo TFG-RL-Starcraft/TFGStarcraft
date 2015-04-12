@@ -101,6 +101,11 @@ public class QLearner {
 	}
 	
 	// The full QTable
+	public int[][] visitTable() {
+		return environment.getVisitTable();
+	}
+	
+	// The full QTable
 	public QTable qTable() {
 		return qTable;
 	}

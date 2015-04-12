@@ -1,5 +1,6 @@
 package laberinto;
 
+import entrada_salida.O_VisitTable;
 import generador_laberintos.Casilla;
 
 import java.awt.Color;
@@ -37,6 +38,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     private LaberintoState estado_actual;
     private boolean terminado;
+    private boolean cargado = false;
     
     private QLearner q; //guarda la referencia a toda la estructura del ejercicio
     private Environment env;
@@ -99,32 +101,37 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     
     private void btEmpezarActionPerformed(java.awt.event.ActionEvent evt) {
-        long start = System.currentTimeMillis();
-        
-        //Repetir este experimento num_iter veces
-        int num_experimento = 500;
-        for(int i=0; i<num_experimento; i++)
-        {
-        	//Ejecuta el experimento hasta llegar a la meta
-        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
-        		//Tenemos que definir de alguna forma un bucle "infinito"
-        	terminado = false;
-        	while(!terminado)
-        		q.step();
-        }
-        
-        long end = System.currentTimeMillis();
-        long res = end - start;
-        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.");
-              
-		//Imprime el mejor camino
-        imprimeMejorCamino();  
-        
-        //añade a pantalla los valores de la QTable
-        imprimeValoresQTabla();   
+    	if(cargado){
+	        long start = System.currentTimeMillis();
+	        
+	        //Repetir este experimento num_iter veces
+	        int num_experimento = 500;
+	        for(int i=0; i<num_experimento; i++)
+	        {
+	        	//Ejecuta el experimento hasta llegar a la meta
+	        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
+	        		//Tenemos que definir de alguna forma un bucle "infinito"
+	        	terminado = false;
+	        	while(!terminado)
+	        		q.step();
+	        }
+	        
+	        long end = System.currentTimeMillis();
+	        long res = end - start;
+	        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.");
+	              
+			//Imprime el mejor camino
+	        imprimeMejorCamino();  
+	        
+	        //añade a pantalla los valores de la QTable
+	        imprimeValoresQTabla(); 
+	        
+	        imprimeTablaVisitas();
+    	}
     }
 
 	private void btCargarLaberintoActionPerformed(ActionEvent evt) {
+		cargado = true;
     	InicializarTablero();
     	InicializarQLearner();
 	}
@@ -216,7 +223,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	private void generarLaberinto() {
 
         tablero = new Casilla [maxX][maxY];
-        
         /* Inicializa las casillas visualmente y las aÃ±ade a la ventana*/
         for(int i = 0; i < maxX ; i++)
         {
@@ -275,7 +281,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     
     
-    
+    private void imprimeTablaVisitas(){
+    	O_VisitTable.escribirTabla(q.visitTable(),"C:\\Users\\Alberto\\Desktop\\tabla.xlsx");
+    }
     
     private void imprimeValoresQTabla() {
     	for(int i = 0; i < maxX ; i++)
@@ -285,7 +293,12 @@ public class VentanaLaberinto extends javax.swing.JFrame {
             	tablero[i][j].setText("UP: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 0)) + 
             			", RIGHT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 1)) + 
             			", DOWN: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 2)) + 
-            			", LEFT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 3)));
+            			", LEFT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 3)) + "\n" +
+            			"UP-LEFT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 4)) + 
+            			", UP-RIGHT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 5)) + 
+            			", DOWN-LEFT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 6)) + 
+            			", DOWN-RIGHT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 7))             			
+            			);
             }
         }	
 	}
