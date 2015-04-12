@@ -133,8 +133,10 @@ public class StarcraftEnvironment implements Environment{
 			if(currentDist!=futureDist){
 				if(currentDist>futureDist){
 					reward = function(currentDist);
+					//System.out.println(reward);
 					//reward = -0.112359550561798*currentDist+10.1123595505618;
 				}else{
+					System.out.println("DECRECE");
 					reward = 0.4;
 				}
 			}
@@ -145,14 +147,14 @@ public class StarcraftEnvironment implements Environment{
 	
 	private double function(double x){
 		double y;
-		
-		double maxDist = Math.sqrt((Math.pow(game.mapHeight(), 2) + Math.pow(game.mapWidth(), 2)));
-		
-		double num = -(maxDist) * Double.sum(x, 1.0);
-		double den = MAX_REWARD - 1.0;
 
-		y = Double.sum((num/den), maxDist);
-		
+		double maxDist = Math.sqrt((Math.pow(game.mapHeight(), 2) + Math.pow(game.mapWidth(), 2)));
+
+		double num = -(MAX_REWARD) * Double.sum(x, -1.0);
+		double den = Double.sum(maxDist, -1.0);
+
+		y = Double.sum((num/den), MAX_REWARD);
+
 		return y;		
 	}
 	
