@@ -134,7 +134,6 @@ public class StarcraftEnvironment implements Environment{
 				if(currentDist>futureDist){
 					reward = function(currentDist);
 				}else{
-					System.out.println();
 					reward = 0.4;
 				}
 			}
