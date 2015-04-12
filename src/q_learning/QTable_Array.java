@@ -4,11 +4,11 @@ package q_learning;
 public class QTable_Array implements QTable {
 
 	private double[][] table;
-	private Action action;
+	private ActionManager actionManager;
 	
-	public QTable_Array(int numStates, int numActions, Action action) {
+	public QTable_Array(int numStates, int numActions, ActionManager actionManager) {
 		table = new double[numStates][numActions];
-		this.action = action;
+		this.actionManager = actionManager;
 		clear();
 	}
 	
@@ -65,7 +65,7 @@ public class QTable_Array implements QTable {
 			}
 		}
 		
-		return action.get(best_index);
+		return actionManager.get(best_index);
 	}
 
 }

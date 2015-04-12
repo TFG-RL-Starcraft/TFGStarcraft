@@ -1,5 +1,6 @@
 package laberinto;
 
+import laberinto.actions.LaberintoActionManager;
 import q_learning.Action;
 import q_learning.Environment;
 import q_learning.State;
@@ -8,17 +9,18 @@ public class LaberintoEnvironment implements Environment{
 
 	private int ancho, alto;
 	private LaberintoState init_state, init_lastState;
-	private LaberintoState state, lastState;
-	VentanaLaberinto game;
+	private LaberintoState lastState;
+	private State previousState;
+	private Action previousAction;	
 
-	public LaberintoEnvironment(VentanaLaberinto game, int ancho, int alto, LaberintoState state, LaberintoState lastState) {
-		this.game = game;
+	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState) {
 		this.ancho = ancho;
 		this.alto = alto;
 		this.init_state = state;
 		this.init_lastState = lastState;
-		this.state = state;
 		this.lastState = lastState;
+		this.previousState = null;
+		this.previousAction = null;
 	}
 	
 	@Override
@@ -28,89 +30,67 @@ public class LaberintoEnvironment implements Environment{
 
 	@Override
 	public int numActions() {
-		return LaberintoAction.values().length;
+		return new LaberintoActionManager().getNumActions();
 	}
 
 	@Override
-	public double execute(Action action) {
+	public void execute(Action action) {
 		
-		double reward = 0;
-		 
-		// Current position
-		int posX = state.getPosX();
-		int posY = state.getPosY();
+		// Update the previous state and action before modifying the current state
+		this.previousState = state();
+		this.previousAction = action;
 		
-		String action_str = "";
-		
-		LaberintoAction lab_action = (LaberintoAction)action;
-		switch(lab_action) {
-		 case MOVE_UP: 
-			 posY--;
-			 action_str = "ARRIBA";
-		     break;
-		 case MOVE_RIGHT: 
-			 posX++;
-			 action_str = "DERECHA";
-		     break;
-		 case MOVE_DOWN:
-			 posY++;
-			 action_str = "ABAJO";
-		     break;
-		 case MOVE_LEFT:
-			 posX--;
-			 action_str = "IZQUIERDA";
-		     break;
-		 default: 
-			 
-			 break;
-		}
-		
-		//mueve la casilla y comprueba si es el final
-		if (esValida(posX, posY))
-		{
-			game.mover(posX, posY);
-		}
-		
-		if (esValida(posX, posY)) {
-			state = new LaberintoState(posX, posY, ancho, alto);
-			if(isFinalState()) {
-				reward = 1000;
-			} 
-		}
-		
-		return reward;
+		action.configureContext();
+		action.execute();
 	}
 
 	@Override
 	public State state() {
-		return state;
+		return PresenterLaberinto.getInstance().getGame().getEstadoActual();
 	}
-
+	
 	@Override
-	public State finalState() {
-		return lastState;
+	public State previousState() {
+		return previousState;
+	}
+	
+	@Override
+	public Action previousAction() {
+		return previousAction;
 	}
 
 	@Override
 	public boolean isFinalState() {
-		return state.getValue() == lastState.getValue();
+		return state().getValue() == lastState.getValue();
 	}
 
+	@Override
+	public boolean stateHasChanged() {		
+		return true;
+	}
+	
+	@Override
+	public double getReward(State state) {
+		
+		double reward = 0; //this value could be 0.001 or very small values
+			
+		// Here you must enter all the rewards of learning
+		
+		if(isFinalState()) { //if the unit reaches the goal
+			reward = 1000;
+		} 
+		
+		return reward;
+	}
+	
 	@Override
 	public void reset() {
-		this.state = this.init_state;
+		this.previousState = null;
+		this.previousAction = null;
+		PresenterLaberinto.getInstance().getGame().setEstadoActual(init_state);
 		this.lastState = this.init_lastState;
+		PresenterLaberinto.getInstance().getGame().setTerminado(true);
 	}
 
-	private boolean esValida(int x, int y) {
-		return (0 <= x) && (x < ancho) &&
-				(0 <= y) && (y < alto) && 
-				!game.getCasilla(x, y).esPared();
-	}
-
-	@Override
-	public boolean stateHasChanged() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 }
