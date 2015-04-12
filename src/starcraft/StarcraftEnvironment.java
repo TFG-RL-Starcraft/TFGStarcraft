@@ -133,10 +133,8 @@ public class StarcraftEnvironment implements Environment{
 			if(currentDist!=futureDist){
 				if(currentDist>futureDist){
 					reward = function(currentDist);
-					//System.out.println(reward);
-					//reward = -0.112359550561798*currentDist+10.1123595505618;
 				}else{
-					System.out.println("DECRECE");
+					System.out.println();
 					reward = 0.4;
 				}
 			}
@@ -156,20 +154,6 @@ public class StarcraftEnvironment implements Environment{
 		y = Double.sum((num/den), MAX_REWARD);
 
 		return y;		
-	}
-	
-	private boolean getCloser(int newState){
-		boolean reachingEnd = false;
-			
-		if(previousState != null){
-			double currentDist = euclideanDist(previousState().getValue());
-			double futureDist = euclideanDist(newState);
-			
-			if(currentDist>futureDist) 
-				reachingEnd = true;
-		}
-		
-		return reachingEnd;
 	}
 	
 	private double euclideanDist(int newState){
