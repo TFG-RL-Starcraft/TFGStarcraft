@@ -42,11 +42,12 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     private QLearner q; //guarda la referencia a toda la estructura del ejercicio
     private Environment env;
-    QTable qT;
+    QTable qT;  
+    int[][] tableroVisitas; //tabla en la que guardamos cuantas veces se pasa por cada estado
     
     int maxX = 15; //casillas máximas en horizontal y vertical
     int maxY = 15;
-    
+     
     // Variables declaration - do not modify
     private javax.swing.JButton btEmpezar;
     private javax.swing.JButton btCargarLaberinto;
@@ -126,6 +127,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        //añade a pantalla los valores de la QTable
 	        imprimeValoresQTabla(); 
 	        
+	        //imprime el excel con la tabla de los estados visitados
 	        imprimeTablaVisitas();
     	}
     }
@@ -141,8 +143,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	LaberintoState casilla_inicial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
+        tableroVisitas = new int[maxY][maxX];
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY);
-        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final);
+        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
         q = new QLearner(env, qT, new LaberintoActionManager(), NUM_MAX_ITER); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
@@ -279,11 +282,11 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         return this.tablero[x][y];
     }
 
-    
-    
+ 
     private void imprimeTablaVisitas(){
-    	Office_VisitTable.escribirTabla(q.visitTable(),"visitMap.xlsx");
+    	Office_VisitTable.escribirTabla(tableroVisitas,"visitMap.xlsx");
     }
+    
     
     private void imprimeValoresQTabla() {
     	for(int i = 0; i < maxX ; i++)
@@ -315,6 +318,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         	qp.step(false);       	
         }	
 	}
+    
 
 	private void LimpiarTablero() {
 		for(int i = 0; i < maxX ; i++)

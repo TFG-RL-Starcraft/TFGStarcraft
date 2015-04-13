@@ -17,7 +17,7 @@ public class LaberintoEnvironment implements Environment{
 	private State previousState;
 	private Action previousAction;	
 
-	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState) {
+	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, int[][] tableroVisitas) {
 		this.ancho = ancho;
 		this.alto = alto;
 		this.init_state = state;
@@ -26,19 +26,14 @@ public class LaberintoEnvironment implements Environment{
 		this.previousState = null;
 		this.previousAction = null;
 		
-		
-        tableroVisitas = new int[alto][ancho];
+		this.tableroVisitas = tableroVisitas;
 		for(int i = 0; i < alto; i++){
 			for(int j = 0; j < ancho; j++){
 				tableroVisitas[i][j] = 0;
 			}
 		}
 	}
-	
-	public int[][] getVisitTable(){
-		return tableroVisitas;
-	}
-	
+
 	@Override
 	public int numStates() {
 		return ancho * alto;
@@ -51,8 +46,9 @@ public class LaberintoEnvironment implements Environment{
 
 	@Override
 	public void execute(Action action) {
-		if(previousState != state())
-			imGonnaMove();
+		
+		// First update the table with the number of visits
+		updateNumberOfVisitsTable();
 		
 		// Update the previous state and action before modifying the current state
 		this.previousState = state();
@@ -62,7 +58,7 @@ public class LaberintoEnvironment implements Environment{
 		action.execute();
 	}
 	
-	private void imGonnaMove(){
+	private void updateNumberOfVisitsTable(){
 		State s = state();	
 		int y = (int)(s.getValue() /  alto);
 		int x = s.getValue() % ancho;

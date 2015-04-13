@@ -2,6 +2,9 @@ package q_learning;
 
 public class VisitedStateTable {
 
+	//THIS COULD BE USEFULL IN THE IMPLEMENTATION OF THE ANTILOOPS
+	//BY THE TIME THIS CODE IS COMMENTED, AND IT CAN DE REUSED IN THE FUTURE
+	
 	/*private boolean[] visited;
 	
 	public VisitedStateTable(int numStates) {

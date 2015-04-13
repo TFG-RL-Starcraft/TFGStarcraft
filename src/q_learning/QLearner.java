@@ -31,14 +31,16 @@ public class QLearner {
 		if(environment.stateHasChanged()) {
 	
 			// 1. Gets the reward of the PREVIOUS action, and Update the Q-Table of it
-			State newState = environment.state();
+			
 			State state = environment.previousState();
 			Action action = environment.previousAction();
+			State newState = environment.state();
 
 			double reward = environment.getReward(newState);
 				
-			if(state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration,
-				//in that case, we can't update the Q-Table			
+			if(state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
+						//and the newState can be null if the game ends; in these cases, we can't update the Q-Table			
+				
 				// Update Q-Table
 				//Q(s,a) = Q(s,a) + alpha( r + gamma * max a'(Q(s', a')) - Q(s,a) )
 				double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));	
@@ -98,11 +100,6 @@ public class QLearner {
 		}
 
 		return null;
-	}
-	
-	// The full QTable
-	public int[][] visitTable() {
-		return environment.getVisitTable();
 	}
 	
 	// The full QTable
