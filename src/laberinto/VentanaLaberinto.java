@@ -1,6 +1,6 @@
 package laberinto;
 
-import entrada_salida.O_VisitTable;
+import entrada_salida.Office_VisitTable;
 import generador_laberintos.Casilla;
 
 import java.awt.Color;
@@ -282,7 +282,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     
     private void imprimeTablaVisitas(){
-    	O_VisitTable.escribirTabla(q.visitTable(),"C:\\Users\\Alberto\\Desktop\\tabla.xlsx");
+    	Office_VisitTable.escribirTabla(q.visitTable(),"C:\\Users\\Alberto\\Desktop\\tabla.xlsx");
     }
     
     private void imprimeValoresQTabla() {

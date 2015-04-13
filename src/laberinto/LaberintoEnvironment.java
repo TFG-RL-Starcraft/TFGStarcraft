@@ -136,6 +136,7 @@ public class LaberintoEnvironment implements Environment{
 		}
 		
 		return reward;
+	}
 	
 	private double function(double x){
 		double y;
@@ -146,7 +147,9 @@ public class LaberintoEnvironment implements Environment{
 		double den = Double.sum(maxDist, -1.0);
 
 		y = Double.sum((num/den), MAX_REWARD);
+
 		return y;		
+	}
 	
 	private double euclideanDist(int newState){
 		double dist = Double.MAX_VALUE;

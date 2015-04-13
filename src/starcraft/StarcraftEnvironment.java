@@ -65,6 +65,7 @@ public class StarcraftEnvironment implements Environment{
 					(int)unit.getPosition().getY()/Presenter.getInstance().getBoxSize(), game.mapWidth(), game.mapHeight());
 		}else{
 			return null;
+		}
 	}
 
 	@Override
@@ -139,7 +140,9 @@ public class StarcraftEnvironment implements Environment{
 				}else{
 					reward = 0.4;
 				}
+			}
 		}
+		
 		return reward;
 	}
 	
@@ -150,9 +153,11 @@ public class StarcraftEnvironment implements Environment{
 
 		double num = -(MAX_REWARD) * Double.sum(x, -1.0);
 		double den = Double.sum(maxDist, -1.0);
+
 		y = Double.sum((num/den), MAX_REWARD);
 
 		return y;		
+	}		
 	
 	private double euclideanDist(int newState){
 		double dist = Double.MAX_VALUE;
