@@ -70,6 +70,10 @@ public class Laberinto
 	public void setPared(Casilla c, boolean b) {
 		c.setPared(b);	
 	}
+	
+	public void setEnemigo(Casilla c, boolean b) {
+		c.setEnemigo(b);	
+	}
 
 	public void reset() {
 		inicio = null;

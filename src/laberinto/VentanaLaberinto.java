@@ -29,6 +29,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int PARED = 1;
     public static final int INICIO = 2;
     public static final int META = 3;
+    public static final int ENEMIGO = 4;
     
     public static final int NUM_MAX_ITER = 2000;
     

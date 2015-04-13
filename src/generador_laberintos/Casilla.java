@@ -42,6 +42,10 @@ public class Casilla extends JButton
     {
         return this.tipo.compareTo(TipoCasilla.INICIO) == 0;
     }
+    public boolean esEnemigo()
+    {
+        return this.tipo.compareTo(TipoCasilla.ENEMIGO) == 0;
+    }
     public void setVacio()
     {
     	this.tipo = TipoCasilla.VACIO;
@@ -79,6 +83,19 @@ public class Casilla extends JButton
         {
         	this.tipo = TipoCasilla.PARED;
             this.setBackground(Color.black);
+        }
+        else
+        {
+        	this.tipo = TipoCasilla.VACIO;
+            this.setBackground(Color.white);
+        }
+    }
+    public void setEnemigo(boolean b)
+    {
+        if(b)
+        {
+        	this.tipo = TipoCasilla.ENEMIGO;
+            this.setBackground(Color.red);
         }
         else
         {

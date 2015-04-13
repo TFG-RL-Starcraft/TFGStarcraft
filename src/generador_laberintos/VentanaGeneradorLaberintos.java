@@ -47,10 +47,13 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
         btCargarLaberinto = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btReset = new javax.swing.JButton();
+        btSeleccionarEnemigos = new javax.swing.JButton();
         jTextFieldX = new javax.swing.JTextField();
         jTextFieldY = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        
+        seleccionandoEnemigos = false;
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
@@ -80,6 +83,15 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
             }
         });
 
+        
+        btSeleccionarEnemigos.setText("Seleccionar enemigos");
+        btSeleccionarEnemigos.setEnabled(false);
+        btSeleccionarEnemigos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	btSeleccionarEnemigosActionPerformed(evt);
+            }
+        });
+        
         jTextFieldX.setText("15");
         jTextFieldX.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -121,7 +133,9 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
                         .addGap(31, 31, 31)
                         .addComponent(btCargarLaberinto)
                         .addGap(31, 31, 31)
-                        .addComponent(jLabel1))
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(btSeleccionarEnemigos))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(168, 168, 168)
                         .addComponent(lbPaso)))
@@ -136,7 +150,8 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
                     .addComponent(btCargarLaberinto)
                     .addComponent(jLabel1)
                     .addComponent(btReset)
-                    .addComponent(jButton1))
+                    .addComponent(jButton1)
+                    .addComponent(btSeleccionarEnemigos))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(34, 34, 34)
@@ -164,6 +179,22 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
 	private void btResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResetActionPerformed
         reset();
         
+    }//GEN-LAST:event_btResetActionPerformed
+	
+	private void btSeleccionarEnemigosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResetActionPerformed
+		seleccionandoEnemigos = !seleccionandoEnemigos;
+		if(seleccionandoEnemigos)
+		{
+			btSeleccionarEnemigos.setText("seleccionar paredes");
+			jLabel1.setText("Seleccionando ENEMIGOS");
+		}
+			
+		else
+		{
+			btSeleccionarEnemigos.setText("seleccionar enemigos");
+			jLabel1.setText("Seleccionando PAREDES");
+		}
+			
     }//GEN-LAST:event_btResetActionPerformed
 
     private void jTextFieldXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldXActionPerformed
@@ -232,15 +263,23 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
                 laberinto.setMeta(c);
                 this.repaint();
                 
-                jLabel1.setText("Seleccione las paredes");
+                btSeleccionarEnemigos.setEnabled(true);
+                
+                jLabel1.setText("Seleccionando PAREDES");
             }
         }
-		else //si ya estan asignados inicio y meta, asigna las paredes
+		else //si ya estan asignados inicio y meta, asigna las paredes o Enemigos
         {
             if(!c.esInicio() && !c.esMeta())
             {
-            	//si es pared la pone vacio, y si es vacio lo pone pared
-            	laberinto.setPared(c, !c.esPared());
+            	if(seleccionandoEnemigos)  
+            	{//si es enemigo la pone vacio, y si es vacio lo pone enemigo (si es pared no hace nada)
+            		if(!c.esPared())	            	
+            			laberinto.setEnemigo(c, !c.esEnemigo());
+            	} else {//si es pared la pone vacio, y si es vacio lo pone pared (si es enemigo no hace nada)
+            		if(!c.esEnemigo())
+            			laberinto.setPared(c, !c.esPared());
+            	}
                 
                 this.repaint();
             }
@@ -348,7 +387,13 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
             			//a.setPared(this.tablero[i][cont_Y], true);
                         //setPared(this.tablero[i][cont_Y], true);
             		}
-                	else if(Integer.parseInt(cas[i]) == TipoCasilla.INICIO.getValor())
+            		else if(Integer.parseInt(cas[i]) == TipoCasilla.ENEMIGO.getValor())
+                	{
+            			laberinto.setEnemigo(laberinto.getCasilla(i, cont_Y), true);
+            			//a.setEnemigo(this.tablero[i][cont_Y], true);
+                        //setEnemigo(this.tablero[i][cont_Y], true);
+                	}
+            		else if(Integer.parseInt(cas[i]) == TipoCasilla.INICIO.getValor())
                 	{
                         //inicio = this.tablero[i][cont_Y];
                         //setInicio(inicio);
@@ -358,6 +403,7 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
                 		//meta = this.tablero[i][cont_Y];
                         //setMeta(meta);
                 	}
+                	
 
             	}
             	cont_Y++;
@@ -392,5 +438,8 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldX;
     private javax.swing.JTextField jTextFieldY;
     private javax.swing.JLabel lbPaso;
+    
+    private javax.swing.JButton btSeleccionarEnemigos;
+    private boolean seleccionandoEnemigos;
     // End of variables declaration//GEN-END:variables
 }

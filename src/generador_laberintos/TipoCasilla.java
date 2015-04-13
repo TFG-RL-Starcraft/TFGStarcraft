@@ -11,7 +11,8 @@ public enum TipoCasilla
 	VACIO(0),
 	PARED(1),
 	INICIO(2),
-	META(3);
+	META(3),
+	ENEMIGO(4);
 	
     private final int valor;
 	
