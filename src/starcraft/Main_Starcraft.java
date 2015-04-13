@@ -15,7 +15,7 @@ import bwta.*;
 public class Main_Starcraft{
 
 	private static long time_start, time_end;
-	private int MAX_ITER = 5000;
+	private int MAX_ITER = 100;
 	
     private Mirror mirror = new Mirror();
 
