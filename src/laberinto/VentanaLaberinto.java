@@ -282,7 +282,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     
     private void imprimeTablaVisitas(){
-    	Office_VisitTable.escribirTabla(q.visitTable(),"C:\\Users\\Alberto\\Desktop\\tabla.xlsx");
+    	Office_VisitTable.escribirTabla(q.visitTable(),"visitMap.xlsx");
     }
     
     private void imprimeValoresQTabla() {
