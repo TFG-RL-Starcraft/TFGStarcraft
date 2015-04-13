@@ -58,7 +58,7 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
         btSalvarLaberinto.setText("SALVAR LABERINTO");
-        btSalvarLaberinto.setEnabled(true);
+        btSalvarLaberinto.setEnabled(false);
         btSalvarLaberinto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSalvarLaberintoActionPerformed(evt);
@@ -66,7 +66,7 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
         });
         
         btCargarLaberinto.setText("CARGAR LABERINTO");
-        btCargarLaberinto.setEnabled(true);
+        btCargarLaberinto.setEnabled(false);
         btCargarLaberinto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
             	btCargarLaberintoActionPerformed(evt);
@@ -201,7 +201,7 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldXActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        generarTablero();
+        generarTablero(Integer.valueOf(jTextFieldX.getText()), Integer.valueOf(jTextFieldY.getText()));        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -209,14 +209,13 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
      */
     
   
-    private void generarTablero() {
+    private void generarTablero(int x, int y) {
     	jButton1.setEnabled(false);
         jTextFieldX.setEnabled(false);
         jTextFieldY.setEnabled(false);
+        btCargarLaberinto.setEnabled(true);
+        btSalvarLaberinto.setEnabled(true);
         btReset.setEnabled(true);    	
-    	
-    	int x = Integer.valueOf(jTextFieldX.getText());
-        int y = Integer.valueOf(jTextFieldY.getText());
         
         //Inicializa el laberinto
         laberinto = new Laberinto(new Casilla[x][y], null, null, x, y);
@@ -371,7 +370,7 @@ public class VentanaGeneradorLaberintos extends javax.swing.JFrame {
             jTextFieldX.setText(dim[0]);
             jTextFieldY.setText(dim[1]);
             
-            generarTablero(); //aquí genera el tablero y vuelve a dar valor a las variables locales
+            generarTablero(Integer.parseInt(dim[0]), Integer.parseInt(dim[1])); //aquí genera el tablero y vuelve a dar valor a las variables locales
             jLabel1.setText("Seleccione la casilla de inicio");
             
             //generamos el resto de casillas
