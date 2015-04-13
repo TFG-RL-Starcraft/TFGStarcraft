@@ -10,10 +10,13 @@ import bwapi.Unit;
 //COMENTARIO DE PRUEBA
 public class StarcraftEnvironment implements Environment{
 	
+	private double MAX_REWARD = 10.0;
+	
 	private Game game;
 	private Unit unit;
 	private State previousState;
 	private Action previousAction;
+	private boolean unitIsDead = false;
 	//we don not need to save the current state, because we get it in runtime
 	private ArrayList<Integer> finalState; //array with the hash values of all possible final states 
 	//private VisitedStateTable vTable;
@@ -28,6 +31,10 @@ public class StarcraftEnvironment implements Environment{
 			finalState.add(sta.getValue());
 		}		
 		//vTable = new VisitedStateTable(numStates());
+	}
+	
+	public int[][] getVisitTable(){
+		return null;
 	}
 	
 	@Override
@@ -53,8 +60,11 @@ public class StarcraftEnvironment implements Environment{
 
 	@Override
 	public State state() {
-		return new StarcraftState((int)unit.getPosition().getX()/Presenter.getInstance().getBoxSize(), 
-				(int)unit.getPosition().getY()/Presenter.getInstance().getBoxSize(), game.mapWidth(), game.mapHeight());
+		if(unit.exists()){
+			return new StarcraftState((int)unit.getPosition().getX()/Presenter.getInstance().getBoxSize(), 
+					(int)unit.getPosition().getY()/Presenter.getInstance().getBoxSize(), game.mapWidth(), game.mapHeight());
+		}else{
+			return null;
 	}
 
 	@Override
@@ -69,7 +79,7 @@ public class StarcraftEnvironment implements Environment{
 	
 	@Override
 	public boolean isFinalState() {
-		return hasWon() || hasLost();
+		return hasLost() || hasWon();
 	}
 	
 	private boolean hasWon() {
@@ -77,7 +87,8 @@ public class StarcraftEnvironment implements Environment{
 	}
 	
 	private boolean hasLost() {
-		return !unit.exists();
+		return !Presenter.getInstance().getUnit().exists();
+		//return !this.unit.exists();
 	}
 
 	@Override
@@ -86,25 +97,23 @@ public class StarcraftEnvironment implements Environment{
 	}
 	
 	@Override
-	public double getReward(State state) {
-		double reward = 0; //this value could be 0.001 or very small values
-		
+	public double getReward(State state) {		
 		//If the current distance to the final is bigger than the future increase the reward
-		if(getCloser(state.getValue()))
-			reward = 10;
-		
-		//System.out.println(reward);
+		double reward;
+
 		// Here you must enter all the rewards of learning
-		if(hasWon()) { //if the unit reaches the goal
-			reward = 1000;
-		} else if(hasLost()) { //if the unit doesn't exist (lost game)
+		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = -1;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = 1000;
 		} else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
 			reward = -10;
 //		} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state
 //			reward = 0;
-		}
-
+		} else{
+			reward = getReward(state.getValue());
+		}	
+		
 		return reward;
 	}
 	
@@ -117,19 +126,33 @@ public class StarcraftEnvironment implements Environment{
 		game.restartGame();
 	}
 	
-	private boolean getCloser(int newState){
-		boolean reachingEnd = false;
-			
+	private double getReward(int newState){
+		double reward = 0.5;
+		
 		if(previousState != null){
 			double currentDist = euclideanDist(previousState().getValue());
 			double futureDist = euclideanDist(newState);
 			
-			if(currentDist>futureDist) 
-				reachingEnd = true;
+			if(currentDist!=futureDist){
+				if(currentDist>futureDist){
+					reward = function(currentDist);
+				}else{
+					reward = 0.4;
+				}
 		}
-		
-		return reachingEnd;
+		return reward;
 	}
+	
+	private double function(double x){
+		double y;
+
+		double maxDist = Math.sqrt((Math.pow(game.mapHeight(), 2) + Math.pow(game.mapWidth(), 2)));
+
+		double num = -(MAX_REWARD) * Double.sum(x, -1.0);
+		double den = Double.sum(maxDist, -1.0);
+		y = Double.sum((num/den), MAX_REWARD);
+
+		return y;		
 	
 	private double euclideanDist(int newState){
 		double dist = Double.MAX_VALUE;

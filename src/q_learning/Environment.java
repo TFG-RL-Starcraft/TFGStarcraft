@@ -36,6 +36,12 @@ public interface Environment {
 	// Get the reward of a given state
 	public double getReward(State state);
 	
+<<<<<<< HEAD
+=======
+	// Get visit table
+	public int[][] getVisitTable();
+	
+>>>>>>> 0bee5d6d052a73c8643021f5ad1781658b5c4b99
 	// Reset to initial world state
 	public void reset();
 
