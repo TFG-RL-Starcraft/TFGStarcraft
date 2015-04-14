@@ -109,6 +109,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	if(cargado){
 	        long start = System.currentTimeMillis();
 	        
+	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
+	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
+	        
 	        //Repetir este experimento num_iter veces
 	        int num_experimento = 500;
 	        for(int i=0; i<num_experimento; i++)
