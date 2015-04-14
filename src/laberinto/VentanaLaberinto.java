@@ -32,7 +32,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int META = 3;
     public static final int ENEMIGO = 4;
     
-    public static final int NUM_MAX_ITER = 2000;
+    public static final int NUM_ITERACIONES = 500; //número máximo de iteraciones (pasos) para cada experimento
+    public static final int NUM_EXPERIMENTOS = 50; //numero de experimentos completos, 
+    							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
     
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
     private Casilla salida;
@@ -40,7 +42,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     private LaberintoState estado_actual;
     private boolean terminado;
-    private boolean cargado = false;
     
     private QLearner q; //guarda la referencia a toda la estructura del ejercicio
     private Environment env;
@@ -76,6 +77,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         btEmpezar.setText("Empezar");
+        btEmpezar.setEnabled(false);
         btEmpezar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btEmpezarActionPerformed(evt);
@@ -106,43 +108,51 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     
     private void btEmpezarActionPerformed(java.awt.event.ActionEvent evt) {
-    	if(cargado){
-	        long start = System.currentTimeMillis();
-	        
-	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
-	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
-	        
-	        //Repetir este experimento num_iter veces
-	        int num_experimento = 500;
-	        for(int i=0; i<num_experimento; i++)
-	        {
-	        	//Ejecuta el experimento hasta llegar a la meta
-	        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
-	        		//Tenemos que definir de alguna forma un bucle "infinito"
-	        	terminado = false;
-	        	while(!terminado)
-	        		q.step();
-	        }
-	        
-	        long end = System.currentTimeMillis();
-	        long res = end - start;
-	        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.");
-	              
-			//Imprime el mejor camino
-	        imprimeMejorCamino();  
-	        
-	        //añade a pantalla los valores de la QTable
-	        imprimeValoresQTabla(); 
-	        
-	        //imprime el excel con la tabla de los estados visitados
-	        imprimeTablaVisitas();
+    	/*//Por el momento vamos a omitir el tiempo de ejecución, ya que no es relevante
+        long start = System.currentTimeMillis(); */
+        
+        //Realiza NUM_EXPERIMENTOS pruebas y va almacenando la media de los resultados        
+    	for(int i=0; i<NUM_EXPERIMENTOS; i++)
+    	{
+    		// 1.Inicializa y "resetea" las variables y tablas
+    		
+    		
+    		// 2.Ejecuta el experimento
+		    //Realiza NUM_ITERACIONES llamadas al método step de QLearner        
+		    for(int j=0; j<NUM_ITERACIONES; j++)
+		    {
+		    	//Ejecuta el experimento hasta llegar a la meta
+		    	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
+				//Tenemos que definir de alguna forma un bucle "infinito"
+				//Lo hacemos mediante la varible "terminado" a la que el LaberintoEnvironment puede acceder.
+		    	terminado = false;
+		    	while(!terminado)
+		    		q.step();
+		    }
+		    
+		    // 3.Almacena los datos haciendo la media de los mismos
+		    
+		    
     	}
+    	
+        /*long end = System.currentTimeMillis();
+        long res = end - start;
+        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.");*/
+              
+		//Imprime el mejor camino
+        imprimeMejorCamino();  
+        
+        //añade a pantalla los valores de la QTable
+        imprimeValoresQTabla(); 
+        
+        //imprime el excel con la tabla de los estados visitados
+        imprimeTablaVisitas();
     }
 
 	private void btCargarLaberintoActionPerformed(ActionEvent evt) {
-		cargado = true;
     	InicializarTablero();
     	InicializarQLearner();
+    	btEmpezar.setEnabled(true);
 	}
 
 
@@ -154,7 +164,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY);
         env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
-        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_MAX_ITER); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
+        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_ITERACIONES); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
 	}
 
