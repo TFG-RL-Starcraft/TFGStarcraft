@@ -1,0 +1,7 @@
+/bin/
+/log.txt
+/qtabla.txt
+/log*.txt
+/qtabla*.txt
+/visitMap.xlsx
+*.bwta
