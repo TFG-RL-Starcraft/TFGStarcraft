@@ -105,20 +105,20 @@ public class LaberintoEnvironment implements Environment{
 	@Override
 	public double getReward(State state) {
 		//If the current distance to the final is bigger than the future increase the reward
-		double reward;
+		double reward = 0;
 
 		// Here you must enter all the rewards of learning
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = -1;
 		} else if(hasWon()) { //if the unit reaches the goal
 			reward = 1000;
-		} else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
+		} /*else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
 			reward = -10;
 //				} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state
 //					reward = 0;
 		} else{
 			reward = getReward(state.getValue());
-		}	
+		}*/	
 		
 		return reward;
 	}
