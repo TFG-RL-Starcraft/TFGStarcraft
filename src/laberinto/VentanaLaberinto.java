@@ -204,6 +204,10 @@ public class VentanaLaberinto extends javax.swing.JFrame {
                 		meta = this.tablero[i][cont_Y];
                         setMeta(meta);
                 	}
+                	else if(Integer.parseInt(cas[i]) == ENEMIGO)
+                	{
+                		setEnemigo(this.tablero[i][cont_Y]);
+                	}
 
             	}
             	cont_Y++;
@@ -276,6 +280,15 @@ public class VentanaLaberinto extends javax.swing.JFrame {
        
         this.repaint();
     }
+    
+    
+    public void setEnemigo(Casilla pared)
+    {    
+    	pared.setEnemigo(true);
+    	pared.setBackground(Color.red);
+       
+        this.repaint();
+    }
 	
 	
     public Casilla getCasilla(int x, int y)
@@ -337,6 +350,10 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        	else if(tablero[i][j].esMeta())
 	        	{
 	        		tablero[i][j].setBackground(Color.green);
+	        	}
+	        	else if(tablero[i][j].esEnemigo())
+	        	{
+	        		tablero[i][j].setBackground(Color.red);
 	        	}
 	        	else
 	        	{
