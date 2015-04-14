@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 import laberinto.actions.LaberintoActionManager;
 import q_learning.Environment;
@@ -45,6 +46,8 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     private Environment env;
     QTable qT;  
     int[][] tableroVisitas; //tabla en la que guardamos cuantas veces se pasa por cada estado
+    
+    ArrayList<Integer> listaEnemigos; //arraylist con los indices de los estados de las casillas con enemigo
     
     int maxX = 15; //casillas máximas en horizontal y vertical
     int maxY = 15;
@@ -146,7 +149,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
         tableroVisitas = new int[maxY][maxX];
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY);
-        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas);
+        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
         q = new QLearner(env, qT, new LaberintoActionManager(), NUM_MAX_ITER); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
@@ -164,6 +167,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
             	this.tablero[i][j] = null;
             }            
         }
+    	listaEnemigos = new ArrayList<Integer>();
     	
     	//leemos el fichero y generamos el nuevo laberinto
     	FileReader fichero = null;
@@ -207,6 +211,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
                 	else if(Integer.parseInt(cas[i]) == ENEMIGO)
                 	{
                 		setEnemigo(this.tablero[i][cont_Y]);
+                		listaEnemigos.add(new LaberintoState(i, cont_Y, maxX, maxY).getValue());
                 	}
 
             	}

@@ -1,5 +1,7 @@
 package laberinto;
 
+import java.util.ArrayList;
+
 import laberinto.actions.LaberintoActionManager;
 import q_learning.Action;
 import q_learning.Environment;
@@ -16,8 +18,9 @@ public class LaberintoEnvironment implements Environment{
 	private LaberintoState lastState;
 	private State previousState;
 	private Action previousAction;	
+	private ArrayList<Integer> listaEstadosMuerto;
 
-	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, int[][] tableroVisitas) {
+	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, int[][] tableroVisitas, ArrayList<Integer> listaEstadosMuerto) {
 		this.ancho = ancho;
 		this.alto = alto;
 		this.init_state = state;
@@ -25,6 +28,7 @@ public class LaberintoEnvironment implements Environment{
 		this.lastState = lastState;
 		this.previousState = null;
 		this.previousAction = null;
+		this.listaEstadosMuerto = listaEstadosMuerto;
 		
 		this.tableroVisitas = tableroVisitas;
 		for(int i = 0; i < alto; i++){
@@ -82,9 +86,17 @@ public class LaberintoEnvironment implements Environment{
 
 	@Override
 	public boolean isFinalState() {
-		return state().getValue() == lastState.getValue();
+		return hasLost() || hasWon();		
 	}
 
+	private boolean hasWon() {
+		return state().getValue() == lastState.getValue();
+	}
+	
+	private boolean hasLost() {
+		return listaEstadosMuerto.contains(state().getValue());
+	}
+	
 	@Override
 	public boolean stateHasChanged() {		
 		return true;
@@ -92,16 +104,21 @@ public class LaberintoEnvironment implements Environment{
 	
 	@Override
 	public double getReward(State state) {
-		
-		double reward; //this value could be 0.001 or very small values
-			
+		//If the current distance to the final is bigger than the future increase the reward
+		double reward;
+
 		// Here you must enter all the rewards of learning
-		
-		if(isFinalState()) { //if the unit reaches the goal
+		if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = -1;
+		} else if(hasWon()) { //if the unit reaches the goal
 			reward = 1000;
+		} else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
+			reward = -10;
+//				} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state
+//					reward = 0;
 		} else{
 			reward = getReward(state.getValue());
-		}
+		}	
 		
 		return reward;
 	}
