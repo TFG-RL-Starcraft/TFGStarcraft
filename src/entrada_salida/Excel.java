@@ -5,13 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -59,7 +53,7 @@ public class Excel {
 	}
 	
 	
-	public static void escribirLog(ArrayList<String> log, String path){
+	public static void escribirLog(double[] log, String path){
 		if(path!=null){
 			//Blank workbook
 	        XSSFWorkbook workbook = null;
@@ -76,13 +70,11 @@ public class Excel {
 	        //Create a blank sheet
 	        XSSFSheet sheet = workbook.getSheetAt(0);
 	        
-	        int index = 0;
-	        for(String l: log)
+	        for(int i=0; i<log.length; i++)
 	        {
-	        	Row row = sheet.createRow(index);
+	        	Row row = sheet.createRow(i);
 	        	Cell cell = row.createCell(0);
-        		cell.setCellValue(Double.parseDouble(l));
-	        	index++;
+        		cell.setCellValue(log[i]);
 	        }
         
 	        try

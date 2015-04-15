@@ -1,6 +1,7 @@
 package laberinto;
 
-import entrada_salida.Office_VisitTable;
+import entrada_salida.Log;
+import entrada_salida.Excel;
 import generador_laberintos.Casilla;
 
 import java.awt.Color;
@@ -32,8 +33,10 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int META = 3;
     public static final int ENEMIGO = 4;
     
-    public static final int NUM_ITERACIONES = 500; //número máximo de iteraciones (pasos) para cada experimento
-    public static final int NUM_EXPERIMENTOS = 50; //numero de experimentos completos, 
+    public static final int NUM_ITERACIONES_MAX_QLEARNER = 200; //número máximo de iteraciones (pasos) de cada intento
+    public static final int NUM_INTENTOS_APRENDIZAJE = 500; //número de veces que se realizará el experimento con la misma QTabla. 
+    							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos. 
+    public static final int NUM_EXPERIMENTOS = 100; //numero de experimentos completos, cada experimento consta de varios INTENTOS
     							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
     
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
@@ -108,20 +111,26 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     
     private void btEmpezarActionPerformed(java.awt.event.ActionEvent evt) {
-    	/*//Por el momento vamos a omitir el tiempo de ejecución, ya que no es relevante
-        long start = System.currentTimeMillis(); */
-        
+
+    	double[] logFinal = new double[NUM_INTENTOS_APRENDIZAJE]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
+    	for(int d=0; d<NUM_INTENTOS_APRENDIZAJE; d++)
+    		logFinal[d] = 0;
+    	
         //Realiza NUM_EXPERIMENTOS pruebas y va almacenando la media de los resultados        
     	for(int i=0; i<NUM_EXPERIMENTOS; i++)
     	{
+        	//Por el momento vamos a omitir el tiempo de ejecución, ya que no es relevante.
+        	//Esto es porque para medir la eficacia de los algoritmosmediremos el número de iteraciones
+            long start = System.currentTimeMillis();
+    		
     		// 1.Inicializa y "resetea" las variables y tablas
+    		InicializarQLearner();
     		
-    		
-    		// 2.Ejecuta el experimento
-		    //Realiza NUM_ITERACIONES llamadas al método step de QLearner        
-		    for(int j=0; j<NUM_ITERACIONES; j++)
+    		// 2.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
+		    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
+		    for(int j=0; j<NUM_INTENTOS_APRENDIZAJE; j++)
 		    {
-		    	//Ejecuta el experimento hasta llegar a la meta
+		    	//Ejecuta el experimento hasta llegar a la meta, morir o llegar al NUM_ITERACIONES
 		    	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
 				//Tenemos que definir de alguna forma un bucle "infinito"
 				//Lo hacemos mediante la varible "terminado" a la que el LaberintoEnvironment puede acceder.
@@ -130,14 +139,37 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 		    		q.step();
 		    }
 		    
-		    // 3.Almacena los datos haciendo la media de los mismos
+		    // 3.Almacena los datos haciendo la MEDIA (/NUM_EXPERIMENTOS) de los mismos
+		    	//Nos interesa almacenar: 1. Número de pasos utilizados en llegar al final o morir (log)
+		    							//2. Número de veces que se accede a cada estado (tableroVisitas)
+		    							//3. Valor de de la QTabla para cada acción en cada estado (QTable)
 		    
+		    ArrayList<String> log = Log.readLog("log.txt");
 		    
+		    int log_index = 0;
+		    for(String l: log)
+		    {	
+		    	if(l.compareToIgnoreCase("dead") == 0) //si el log es de muerto no podemos hacer la media, así que asignaremos el valor máximo
+		    	{
+		    		logFinal[log_index] = logFinal[log_index] + (double)NUM_ITERACIONES_MAX_QLEARNER/(double)NUM_EXPERIMENTOS;
+		    	}
+		    	else
+		    	{
+		    		logFinal[log_index] = logFinal[log_index] + Double.parseDouble(l)/(double)NUM_EXPERIMENTOS;
+		    	}
+		    	log_index++;
+		    }
+		    
+		    Log.deleteLog("log.txt");
+ 
+		    
+		    long end = System.currentTimeMillis();
+	        long res = end - start;
+	        System.out.println("EXPERIMENTO " + i + " TARDÓ : " + res/1000.0 + "segs.");
     	}
     	
-        /*long end = System.currentTimeMillis();
-        long res = end - start;
-        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.");*/
+        //Imprime el log final
+    	Excel.escribirLog(logFinal, "log.xlsx");
               
 		//Imprime el mejor camino
         imprimeMejorCamino();  
@@ -151,7 +183,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
 	private void btCargarLaberintoActionPerformed(ActionEvent evt) {
     	InicializarTablero();
-    	InicializarQLearner();
     	btEmpezar.setEnabled(true);
 	}
 
@@ -164,7 +195,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY);
         env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
-        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_ITERACIONES); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
+        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_ITERACIONES_MAX_QLEARNER); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
 	}
 
@@ -316,7 +347,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
  
     private void imprimeTablaVisitas(){
-    	Office_VisitTable.escribirTabla(tableroVisitas,"visitMap.xlsx");
+    	Excel.escribirTabla(tableroVisitas,"visitMap.xlsx");
     }
     
     
