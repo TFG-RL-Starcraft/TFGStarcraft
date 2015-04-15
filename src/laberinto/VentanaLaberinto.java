@@ -34,9 +34,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int ENEMIGO = 4;
     
     public static final int NUM_ITERACIONES_MAX_QLEARNER = 200; //número máximo de iteraciones (pasos) de cada intento
-    public static final int NUM_INTENTOS_APRENDIZAJE = 1000; //número de veces que se realizará el experimento con la misma QTabla. 
+    public static final int NUM_INTENTOS_APRENDIZAJE = 1500; //número de veces que se realizará el experimento con la misma QTabla. 
     							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos. 
-    public static final int NUM_EXPERIMENTOS = 100; //numero de experimentos completos, cada experimento consta de varios INTENTOS
+    public static final int NUM_EXPERIMENTOS = 250; //numero de experimentos completos, cada experimento consta de varios INTENTOS
     							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
     
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
