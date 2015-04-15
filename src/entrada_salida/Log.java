@@ -52,7 +52,7 @@ public class Log {
 	/*
 	 * Devuelve un ArrayList de String, con un String por línea.
 	 */
-	public ArrayList<String> readLog(String path)
+	public static ArrayList<String> readLog(String path)
 	{
         FileReader fr = null;		
 		ArrayList<String> log = new ArrayList<String>();
@@ -85,5 +85,38 @@ public class Log {
 		}
 		
 		return log;
+	}
+
+	
+	
+	public static void deleteLog(String path) {
+		FileWriter file = null;
+		PrintWriter pw = null;
+		
+		if (path != null) {
+			try {
+	         // Open the file in delete content mode (not append)
+			 file = new FileWriter(path, false);	         
+	         
+	      } catch (Exception e) {
+	            
+	        	e.printStackTrace();
+	        
+	        } finally {
+	           
+	        try {
+	           
+	        	// Make sure that closes the file
+	           if (file != null)              
+	        	   file.close();
+	           
+		        } catch (Exception e2) {
+		              
+		        	e2.printStackTrace();
+		           
+		        }
+	        }
+		}
+		
 	}
 }
