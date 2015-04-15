@@ -34,7 +34,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int ENEMIGO = 4;
     
     public static final int NUM_ITERACIONES_MAX_QLEARNER = 200; //número máximo de iteraciones (pasos) de cada intento
-    public static final int NUM_INTENTOS_APRENDIZAJE = 500; //número de veces que se realizará el experimento con la misma QTabla. 
+    public static final int NUM_INTENTOS_APRENDIZAJE = 1000; //número de veces que se realizará el experimento con la misma QTabla. 
     							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos. 
     public static final int NUM_EXPERIMENTOS = 100; //numero de experimentos completos, cada experimento consta de varios INTENTOS
     							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
@@ -116,11 +116,13 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	for(int d=0; d<NUM_INTENTOS_APRENDIZAJE; d++)
     		logFinal[d] = 0;
     	
+    	long start_TOTAL = System.currentTimeMillis();
+    	
         //Realiza NUM_EXPERIMENTOS pruebas y va almacenando la media de los resultados        
     	for(int i=0; i<NUM_EXPERIMENTOS; i++)
     	{
-        	//Por el momento vamos a omitir el tiempo de ejecución, ya que no es relevante.
-        	//Esto es porque para medir la eficacia de los algoritmosmediremos el número de iteraciones
+        	//Con esto mediremos el tiempo de ejecución de cada intento (que aunque no es relevante a la hora de valorar
+    			//la eficacia de las distintas estrategias, sí es útil para el "seguimiento" de la ejecución de los test.
             long start = System.currentTimeMillis();
     		
     		// 1.Inicializa y "resetea" las variables y tablas
@@ -167,6 +169,10 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        long res = end - start;
 	        System.out.println("EXPERIMENTO " + i + " TARDÓ : " + res/1000.0 + "segs.");
     	}
+    	
+    	long end_TOTAL = System.currentTimeMillis();
+        long res_TOTAL = end_TOTAL - start_TOTAL;
+        System.out.println("--- LA EJECUCIÓN COMPLETA TARDÓ : " + res_TOTAL/1000.0 + "segs. ---");
     	
         //Imprime el log final
     	Excel.escribirLog(logFinal, "log.xlsx");
