@@ -19,8 +19,7 @@ public class Excel {
 			try {
 				workbook = new XSSFWorkbook(new FileInputStream(path));
 			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				workbook = new XSSFWorkbook();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -60,8 +59,7 @@ public class Excel {
 			try {
 				workbook = new XSSFWorkbook(new FileInputStream(path));
 			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				workbook = new XSSFWorkbook();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

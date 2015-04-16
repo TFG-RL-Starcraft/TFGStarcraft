@@ -5,8 +5,8 @@ import entrada_salida.Log;
 
 public class QLearner {
 
-	private static double ALPHA = 0.2; //learning rate -> what extent the newly acquired information will override the old information
-	private static double GAMMA = 0.5; //discount factor -> importance to future rewards
+	private double ALPHA; //learning rate -> what extent the newly acquired information will override the old information
+	private double GAMMA; //discount factor -> importance to future rewards
 	
 	private Environment environment;
 	private QTable qTable;
@@ -14,8 +14,10 @@ public class QLearner {
 	private int numIter;
 	private int maxNumIter;
 		
-	public QLearner(Environment environment, QTable qTable, ActionManager actionManager, int maxNumIter)
+	public QLearner(Environment environment, QTable qTable, ActionManager actionManager, int maxNumIter, double alpha, double gamma)
 	{
+		this.ALPHA = alpha;
+		this.GAMMA = gamma;
 		this.environment = environment;
 		this.qTable = qTable;
 		this.actionManager = actionManager;

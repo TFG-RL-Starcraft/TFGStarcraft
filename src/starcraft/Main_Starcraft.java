@@ -88,7 +88,7 @@ public class Main_Starcraft{
 				if(qT == null) {
 					qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
 				}
-				q = new QLearner(e, qT, new StarcraftActionManager(),MAX_ITER);
+				q = new QLearner(e, qT, new StarcraftActionManager(),MAX_ITER, 0.2, 0.5);
 				qp = new QPlayer(e, qT, new StarcraftActionManager());
 				
 				
