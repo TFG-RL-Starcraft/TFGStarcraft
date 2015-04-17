@@ -110,15 +110,21 @@ public class LaberintoEnvironment implements Environment{
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = -1;
 		} else if(hasWon()) { //if the unit reaches the goal
-			reward = Constants.REWARD_WON;
+			reward = function();
 		} /*else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
 			reward = -10;
 //				} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state
 //					reward = 0;
-		} */else{
+		} else{
 			reward = getReward(state.getValue());
-		}
+		}*/
 		
+		return reward;
+	}
+	
+	private double function(){
+		double A = (Constants.REWARD_WON - 10.0) / Math.pow(Constants.NUM_PASOS,2);
+		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + Constants.REWARD_WON;		
 		return reward;
 	}
 	
