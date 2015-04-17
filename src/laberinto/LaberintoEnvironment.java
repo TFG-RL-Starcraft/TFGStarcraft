@@ -2,6 +2,7 @@ package laberinto;
 
 import java.util.ArrayList;
 
+import constants.Constants;
 import laberinto.actions.LaberintoActionManager;
 import q_learning.Action;
 import q_learning.Environment;
@@ -10,8 +11,6 @@ import q_learning.State;
 public class LaberintoEnvironment implements Environment{
 	
 	private int tableroVisitas[][];
-	
-	private double MAX_REWARD = 10.0;
 	
 	private int ancho, alto;
 	private LaberintoState init_state, init_lastState;
@@ -111,14 +110,14 @@ public class LaberintoEnvironment implements Environment{
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = -1;
 		} else if(hasWon()) { //if the unit reaches the goal
-			reward = 1000;
+			reward = Constants.REWARD_WON;
 		} /*else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
 			reward = -10;
 //				} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state
 //					reward = 0;
-		} else{
+		} */else{
 			reward = getReward(state.getValue());
-		}*/	
+		}
 		
 		return reward;
 	}
@@ -133,7 +132,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 
 	private double getReward(int newState){
-		double reward = 0.5;
+		double reward = 1.0 - Constants.GAMMA;
 		
 		if(previousState != null){
 			double currentDist = euclideanDist(previousState().getValue());
@@ -141,27 +140,14 @@ public class LaberintoEnvironment implements Environment{
 			
 			if(currentDist!=futureDist){
 				if(currentDist>futureDist){
-					reward = function(currentDist);
+					reward = 1.0 - Constants.GAMMA + (Constants.GAMMA / 1.5);
 				}else{
-					reward = 0.4;
+					reward = 0.0;
 				}
 			}
 		}
 		
 		return reward;
-	}
-	
-	private double function(double x){
-		double y;
-
-		double maxDist = Math.sqrt((Math.pow(alto, 2) + Math.pow(ancho, 2)));
-
-		double num = -(MAX_REWARD) * Double.sum(x, -1.0);
-		double den = Double.sum(maxDist, -1.0);
-
-		y = Double.sum((num/den), MAX_REWARD);
-
-		return y;		
 	}
 	
 	private double euclideanDist(int newState){

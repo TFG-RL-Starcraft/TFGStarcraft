@@ -1,12 +1,13 @@
 package q_learning;
 
+import constants.Constants;
 import entrada_salida.Log;
 
 
 public class QLearner {
 
-	private static double ALPHA = 0.2; //learning rate -> what extent the newly acquired information will override the old information
-	private static double GAMMA = 0.5; //discount factor -> importance to future rewards
+	private static double ALPHA = Constants.ALPHA; //learning rate -> what extent the newly acquired information will override the old information
+	public static double GAMMA = Constants.GAMMA; //discount factor -> importance to future rewards
 	
 	private Environment environment;
 	private QTable qTable;
@@ -38,14 +39,12 @@ public class QLearner {
 
 			double reward = environment.getReward(newState);
 				
-			if(state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
+			if(!environment.isFinalState() && state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
 						//and the newState can be null if the game ends; in these cases, we can't update the Q-Table			
 				
 				// Update Q-Table
 				//Q(s,a) = Q(s,a) + alpha( r + gamma * max a'(Q(s', a')) - Q(s,a) )
-				double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));	
-				newValue = Math.max(0, newValue); //TODO, ver hasta qué punto tiene sentido este max
-				qTable.set(state, action, newValue);				
+				rewardIt(state,action,newState,reward);		
 			}
 
 			// 2. Ask if the current state is final, and restart in that case; else perform an action
@@ -55,10 +54,12 @@ public class QLearner {
 									//TODO este if/else es sólo para debug
 									if( reward == -1 && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
+										rewardIt(state,action,newState,reward);
 										Log.printLog("log.txt", "dead");
 									}
 									else
 									{
+										function(state, action,newState);
 										Log.printLog("log.txt", Integer.toString(numIter));
 									}										
 
@@ -81,6 +82,20 @@ public class QLearner {
 		}
 		
 		return newAction;
+	}
+	
+	private void rewardIt(State state,Action action,State newState,double reward){
+		double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));	
+		newValue = Math.max(0, newValue); //TODO, ver hasta qué punto tiene sentido este max
+		qTable.set(state, action, newValue);	
+	}
+	
+	private void function(State state,Action action,State newState){
+		double A = (Constants.REWARD_WON - 10.0) / Math.pow(Constants.NUM_PASOS,2);
+		double reward = A * Math.pow(numIter, 2) + Constants.REWARD_WON;		
+		double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));	
+		newValue = Math.max(0, newValue); //TODO, ver hasta qué punto tiene sentido este max
+		qTable.set(state, action, newValue);
 	}
 
 	// Choose a random action considering the probabilities of each

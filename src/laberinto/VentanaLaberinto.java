@@ -1,5 +1,6 @@
 package laberinto;
 
+import entrada_salida.Log;
 import entrada_salida.Office_VisitTable;
 import generador_laberintos.Casilla;
 
@@ -10,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import constants.Constants;
 import laberinto.actions.LaberintoActionManager;
 import q_learning.Environment;
 import q_learning.QLearner;
@@ -32,7 +34,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int META = 3;
     public static final int ENEMIGO = 4;
     
-    public static final int NUM_MAX_ITER = 2000;
+    public static final int NUM_MAX_ITER = Constants.NUM_PASOS;
     
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
     private Casilla salida;
@@ -135,7 +137,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        imprimeValoresQTabla(); 
 	        
 	        //imprime el excel con la tabla de los estados visitados
-	        imprimeTablaVisitas();
+	        //imprimeTablaVisitas();
     	}
     }
 
@@ -258,7 +260,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
                 });
             }
         }
-
+        
         repaint();
     }
     
@@ -322,7 +324,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
             			"UP-LEFT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 4)) + 
             			", UP-RIGHT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 5)) + 
             			", DOWN-LEFT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 6)) + 
-            			", DOWN-RIGHT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 7))             			
+            			", DOWN-RIGHT: " + Double.toString(qT.get(new LaberintoState(i,j,maxX,maxY), 7))
             			);
             }
         }	
@@ -333,12 +335,15 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	LimpiarTablero();
     	env.reset();
     	QPlayer qp = new QPlayer(env, qT, new LaberintoActionManager());
-
+    	int contPasos = 0;
     	//Ejecuta el player hasta llegar a la meta
         while(!env.isFinalState())
         {
-        	qp.step(false);       	
+        	qp.step(false); 
+        	contPasos++;
         }	
+        
+        Log.printLog("log.txt", "/n-----QPlayer = " + contPasos + "-----\n");
 	}
     
 

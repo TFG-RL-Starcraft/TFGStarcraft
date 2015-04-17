@@ -5,18 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class Office_VisitTable {
+public class Office_VisitTable {	
 	public static void escribirTabla(int[][] Table, String path){
 		if(path!=null){
 			//Blank workbook
@@ -29,15 +24,16 @@ public class Office_VisitTable {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-	         
+	        int nSheets = workbook.getNumberOfSheets();
 	        //Create a blank sheet
-	        XSSFSheet sheet = workbook.createSheet("visit table");
+	        XSSFSheet sheet = workbook.createSheet("visit table".concat(Integer.toString(nSheets)));
 
 	        for(int i = 0; i < Table.length; i++){
 	        	Row row = sheet.createRow(i);
 	        	for(int j = 0; j < Table[i].length; j++){
 	        		Cell cell = row.createCell(j);
 	        		cell.setCellValue(Table[i][j]);
+	        		
 	        	}
 	        }
 	        
