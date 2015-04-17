@@ -15,7 +15,7 @@ import bwta.*;
 public class Main_Starcraft{
 
 	private static long time_start, time_end;
-	private int MAX_ITER = 100;
+	private int MAX_ITER = 1500;
 	
     private Mirror mirror = new Mirror();
 
@@ -88,7 +88,7 @@ public class Main_Starcraft{
 				if(qT == null) {
 					qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
 				}
-				q = new QLearner(e, qT, new StarcraftActionManager(),MAX_ITER, 0.2, 0.5);
+				q = new QLearner(e, qT, new StarcraftActionManager(),MAX_ITER, 0.9, 0.1);
 				qp = new QPlayer(e, qT, new StarcraftActionManager());
 				
 				

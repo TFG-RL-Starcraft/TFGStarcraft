@@ -66,7 +66,7 @@ public class Excel {
 			}
 	         
 	        //Create a blank sheet
-	        XSSFSheet sheet = workbook.getSheetAt(0);
+	        XSSFSheet sheet = workbook.createSheet("Iterations");
 	        
 	        for(int i=0; i<log.length; i++)
 	        {

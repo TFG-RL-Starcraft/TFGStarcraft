@@ -33,10 +33,10 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int META = 3;
     public static final int ENEMIGO = 4;
     
-    public static final int NUM_ITERACIONES_MAX_QLEARNER = 100; //número máximo de iteraciones (pasos) de cada intento
+    public static final int NUM_ITERACIONES_MAX_QLEARNER = 500; //número máximo de iteraciones (pasos) de cada intento
     public static final int NUM_INTENTOS_APRENDIZAJE = 1500; //número de veces que se realizará el experimento con la misma QTabla. 
     							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos. 
-    public static final int NUM_EXPERIMENTOS = 150; //numero de experimentos completos, cada experimento consta de varios INTENTOS
+    public static final int NUM_EXPERIMENTOS = 50; //numero de experimentos completos, cada experimento consta de varios INTENTOS
     							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
     
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
@@ -112,28 +112,69 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     private void btEmpezarActionPerformed(java.awt.event.ActionEvent evt) {
 
-    	ArrayList<Double> alpha_list = new ArrayList<Double>();
-    	alpha_list.add(0.1);
-    	alpha_list.add(0.3);
-    	alpha_list.add(0.5);
-    	alpha_list.add(0.7);
-    	alpha_list.add(0.9);
-    	ArrayList<Double> gamma_list = new ArrayList<Double>();
-    	gamma_list.add(0.1);
-    	gamma_list.add(0.3);
-    	gamma_list.add(0.5);
-    	gamma_list.add(0.7);
-    	gamma_list.add(0.9);    	
+    	//En este ArrayList almacenamos los nombres de los POSIBLES MAPAS
+    	ArrayList<String> lista_mapas = new ArrayList<String>();
+    	lista_mapas.add("mapa_facil.txt");
+    	lista_mapas.add("mapa_normal.txt");
+    	lista_mapas.add("mapa_dificil.txt");
     	
-    	for(Double alpha: alpha_list)
+    	//alamcenaremos también el número de NUM_ITERACIONES_MAX_QLEARNER de cada mapa, ya que este valor varía en función de la longitud del mismo
+    	int[] num_iter_max = {100, 500, 2500};
+    	
+    	
+    	
+    	//Clase y ArrayList que vamos a utilizar para recorrer los POSIBLES VALORES DE ALPHA Y GAMMA
+    	class Par{
+    		private double alpha;
+    		private double gamma;
+    		public Par(double alpha, double gamma) {
+    			this.alpha = alpha;
+    			this.gamma = gamma;
+    		}
+    		public double getAlpha() { return this.alpha; }
+    		public double getGamma() { return this.gamma; }
+    	}
+    	
+    	ArrayList<Par> alpha_gamma_list = new ArrayList<Par>();
+    	alpha_gamma_list.add(new Par(0.1, 0.1));
+    	alpha_gamma_list.add(new Par(0.1, 0.3));
+    	alpha_gamma_list.add(new Par(0.1, 0.5));
+    	alpha_gamma_list.add(new Par(0.1, 0.7));
+    	alpha_gamma_list.add(new Par(0.1, 0.9));
+    	alpha_gamma_list.add(new Par(0.3, 0.1));
+    	alpha_gamma_list.add(new Par(0.3, 0.3));
+    	alpha_gamma_list.add(new Par(0.3, 0.5));
+    	alpha_gamma_list.add(new Par(0.3, 0.7));
+    	alpha_gamma_list.add(new Par(0.3, 0.9));
+    	alpha_gamma_list.add(new Par(0.5, 0.1));
+    	alpha_gamma_list.add(new Par(0.5, 0.3));
+    	alpha_gamma_list.add(new Par(0.5, 0.5));
+    	alpha_gamma_list.add(new Par(0.5, 0.7));
+    	alpha_gamma_list.add(new Par(0.5, 0.9));
+    	alpha_gamma_list.add(new Par(0.7, 0.1));
+    	alpha_gamma_list.add(new Par(0.7, 0.3));
+    	alpha_gamma_list.add(new Par(0.7, 0.5));
+    	alpha_gamma_list.add(new Par(0.7, 0.7));
+    	alpha_gamma_list.add(new Par(0.7, 0.9));
+    	alpha_gamma_list.add(new Par(0.9, 0.1));
+    	alpha_gamma_list.add(new Par(0.9, 0.3));
+    	alpha_gamma_list.add(new Par(0.9, 0.5));
+    	alpha_gamma_list.add(new Par(0.9, 0.7));
+    	alpha_gamma_list.add(new Par(0.9, 0.9));
+    	
+    	
+    	
+    	long start_TOTAL = System.currentTimeMillis();
+    	
+    	for(String map: lista_mapas) //por cada mapa
     	{
-    		for(Double gamma: gamma_list)
-    		{
+    		InicializarTablero(map);
+    		
+			for(Par ag: alpha_gamma_list) //por cada posible par de alpha, gamma
+			{
 		    	double[] logFinal = new double[NUM_INTENTOS_APRENDIZAJE]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
 		    	for(int d=0; d<NUM_INTENTOS_APRENDIZAJE; d++)
 		    		logFinal[d] = 0;
-		    	
-		    	long start_TOTAL = System.currentTimeMillis();
 		    	
 		        //Realiza NUM_EXPERIMENTOS pruebas y va almacenando la media de los resultados        
 		    	for(int i=0; i<NUM_EXPERIMENTOS; i++)
@@ -143,7 +184,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 		            long start = System.currentTimeMillis();
 		    		
 		    		// 1.Inicializa y "resetea" las variables y tablas
-		    		InicializarQLearner(alpha, gamma);
+		    		InicializarQLearner(ag.getAlpha(), ag.getGamma(), num_iter_max[lista_mapas.indexOf(map)]);
 		    		
 		    		// 2.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
 				    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
@@ -161,7 +202,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 				    // 3.Almacena los datos haciendo la MEDIA (/NUM_EXPERIMENTOS) de los mismos
 				    	//Nos interesa almacenar: 1. Número de pasos utilizados en llegar al final o morir (log)
 				    							//2. Número de veces que se accede a cada estado (tableroVisitas)
-				    							//3. Valor de de la QTabla para cada acción en cada estado (QTable)
 				    
 				    ArrayList<String> log = Log.readLog("log.txt");
 				    
@@ -170,7 +210,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 				    {	
 				    	if(l.compareToIgnoreCase("dead") == 0) //si el log es de muerto no podemos hacer la media, así que asignaremos el valor máximo
 				    	{
-				    		logFinal[log_index] = logFinal[log_index] + (double)NUM_ITERACIONES_MAX_QLEARNER/(double)NUM_EXPERIMENTOS;
+				    		logFinal[log_index] = logFinal[log_index] + (double)num_iter_max[lista_mapas.indexOf(map)]/(double)NUM_EXPERIMENTOS;
 				    	}
 				    	else
 				    	{
@@ -186,32 +226,34 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 			        long res = end - start;
 			        System.out.println("EXPERIMENTO " + i + " TARDÓ : " + res/1000.0 + "segs.");
 		    	}
-		    	
-		    	long end_TOTAL = System.currentTimeMillis();
-		        long res_TOTAL = end_TOTAL - start_TOTAL;
-		        System.out.println("--- LA EJECUCIÓN COMPLETA TARDÓ : " + res_TOTAL/1000.0 + "segs. ---");
-		    	
+
 		        //Imprime el log final
-		    	Excel.escribirLog(logFinal, "log_" + alpha + "_" + gamma + ".xlsx");
-    		}
+		    	Excel.escribirLog(logFinal, "iters_" + map + "_" + ag.getAlpha() + "_" + ag.getGamma() + ".xlsx");
+			}
+    	
     	}
+    	
+    	long end_TOTAL = System.currentTimeMillis();
+        long res_TOTAL = end_TOTAL - start_TOTAL;
+        System.out.println("--- LA EJECUCIÓN COMPLETA TARDÓ : " + res_TOTAL/1000.0 + "segs. ---");
+	
 		//Imprime el mejor camino
-        imprimeMejorCamino();  
+        //imprimeMejorCamino();  
         
         //añade a pantalla los valores de la QTable
-        imprimeValoresQTabla(); 
+        //imprimeValoresQTabla(); 
         
         //imprime el excel con la tabla de los estados visitados
-        imprimeTablaVisitas();
+        //imprimeTablaVisitas();
     }
 
 	private void btCargarLaberintoActionPerformed(ActionEvent evt) {
-    	InicializarTablero();
+    	InicializarTablero("laberinto.txt");
     	btEmpezar.setEnabled(true);
 	}
 
 
-    private void InicializarQLearner(double alpha, double gamma) {
+    private void InicializarQLearner(double alpha, double gamma, int num_iter_max_qlearner) {
     	LaberintoState casilla_inicial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
@@ -219,12 +261,12 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY);
         env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
-        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_ITERACIONES_MAX_QLEARNER, alpha, gamma); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
+        q = new QLearner(env, qT, new LaberintoActionManager(), num_iter_max_qlearner, alpha, gamma); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
 	}
 
 
-	private void InicializarTablero() {
+	private void InicializarTablero(String map_name) {
     	//borramos el laberinto anterior
     	for(int j = 0; j < maxY;j++)
         {
@@ -242,7 +284,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	BufferedReader br = null;
         try
         {
-            fichero = new FileReader("laberinto.txt");
+            fichero = new FileReader(map_name);
             br = new BufferedReader(fichero);
  
             String linea;
