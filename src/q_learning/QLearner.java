@@ -6,8 +6,8 @@ import entrada_salida.Log;
 
 public class QLearner {
 
-	private static double ALPHA = Constants.ALPHA; //learning rate -> what extent the newly acquired information will override the old information
-	public static double GAMMA = Constants.GAMMA; //discount factor -> importance to future rewards
+	private double ALPHA; //learning rate -> what extent the newly acquired information will override the old information
+	private double GAMMA; //discount factor -> importance to future rewards
 	
 	private Environment environment;
 	private QTable qTable;
@@ -15,8 +15,10 @@ public class QLearner {
 	private int numIter;
 	private int maxNumIter;
 		
-	public QLearner(Environment environment, QTable qTable, ActionManager actionManager, int maxNumIter,int numIter)
+	public QLearner(Environment environment, QTable qTable, ActionManager actionManager, int maxNumIter, int numIter, double alpha, double gamma)
 	{
+		this.ALPHA = alpha;
+		this.GAMMA = gamma;
 		this.environment = environment;
 		this.qTable = qTable;
 		this.actionManager = actionManager;
@@ -39,7 +41,7 @@ public class QLearner {
 
 			double reward = environment.getReward(newState);
 				
-			if(/*!environment.isFinalState() &&*/ state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
+			if(state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
 						//and the newState can be null if the game ends; in these cases, we can't update the Q-Table			
 				
 				// Update Q-Table

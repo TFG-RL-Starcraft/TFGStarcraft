@@ -11,7 +11,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class Office_VisitTable {	
+public class Excel {
 	public static void escribirTabla(int[][] Table, String path){
 		if(path!=null){
 			//Blank workbook
@@ -43,7 +43,46 @@ public class Office_VisitTable {
 	            FileOutputStream out = new FileOutputStream(new File(path));
 	            workbook.write(out);
 	            out.close();
-	            System.out.println("visitMap.xlsx written successfully on disk.");
+	            System.out.println( path +" written successfully on disk.");
+	        }
+	        catch (Exception e)
+	        {
+	            e.printStackTrace();
+	        }
+		}
+	}
+	
+	
+	public static void escribirLog(double[] log, String path){
+		if(path!=null){
+			//Blank workbook
+	        XSSFWorkbook workbook = null;
+			try {
+				workbook = new XSSFWorkbook(new FileInputStream(path));
+			} catch (FileNotFoundException e1) {
+				workbook = new XSSFWorkbook();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	         
+	        //Create a blank sheet
+	        XSSFSheet sheet = workbook.createSheet("Iterations");
+	        
+	        for(int i=0; i<log.length; i++)
+	        {
+	        	Row row = sheet.createRow(i);
+	        	Cell cell = row.createCell(0);
+        		cell.setCellValue(log[i]);
+	        }
+        
+	        try
+	        {
+	            //Write the workbook in file system
+	            FileOutputStream out = new FileOutputStream(new File(path));
+	            workbook.write(out);
+	            out.close();
+	            System.out.println( path + " written successfully on disk.");
 	        }
 	        catch (Exception e)
 	        {

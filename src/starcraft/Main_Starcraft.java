@@ -80,8 +80,8 @@ public class Main_Starcraft{
 				QTable qT = IO_QTable.leerTabla("qtabla.txt");
 				if(qT == null) {
 					qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
-				}				
-				q = new QLearner(e, qT, new StarcraftActionManager(),MAX_ITER,numIter);
+				}
+				q = new QLearner(e, qT, new StarcraftActionManager(), MAX_ITER, numIter, 0.9, 0.1);
 				qp = new QPlayer(e, qT, new StarcraftActionManager());
 				
 				

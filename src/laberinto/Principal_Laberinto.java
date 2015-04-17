@@ -1,5 +1,7 @@
 package laberinto;
 
+import entrada_salida.Log;
+
 
 /**
  *
@@ -12,6 +14,7 @@ public class Principal_Laberinto {
      */
     public static void main(String[] args) {
 
+    	Log.deleteLog("log.txt");
         VentanaLaberinto lab = new VentanaLaberinto();      
         lab.setVisible(true);
     }

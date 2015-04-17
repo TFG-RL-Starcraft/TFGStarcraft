@@ -1,7 +1,7 @@
 package laberinto;
 
 import entrada_salida.Log;
-import entrada_salida.Office_VisitTable;
+import entrada_salida.Excel;
 import generador_laberintos.Casilla;
 
 import java.awt.Color;
@@ -34,7 +34,11 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int META = 3;
     public static final int ENEMIGO = 4;
     
-    public static final int NUM_MAX_ITER = Constants.NUM_PASOS;
+    public static final int NUM_ITERACIONES_MAX_QLEARNER = Constants.NUM_PASOS; //número máximo de iteraciones (pasos) de cada intento
+    public static final int NUM_INTENTOS_APRENDIZAJE = 1500; //número de veces que se realizará el experimento con la misma QTabla. 
+    							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos. 
+    public static final int NUM_EXPERIMENTOS = 50; //numero de experimentos completos, cada experimento consta de varios INTENTOS
+    							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
     
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
     private Casilla salida;
@@ -43,7 +47,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     private LaberintoState estado_actual;
     private boolean terminado;
-    private boolean cargado = false;
     
     private QLearner q; //guarda la referencia a toda la estructura del ejercicio
     private Environment env;
@@ -79,6 +82,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         btEmpezar.setText("Empezar");
+        btEmpezar.setEnabled(false);
         btEmpezar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btEmpezarActionPerformed(evt);
@@ -109,47 +113,149 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     
     private void btEmpezarActionPerformed(java.awt.event.ActionEvent evt) {
-    	if(cargado){
-	        long start = System.currentTimeMillis();
-	        
-	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
-	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
-	        
-	        //Repetir este experimento num_iter veces
-	        int num_experimento = 500;
-	        for(int i=0; i<num_experimento; i++)
-	        {
-	        	//Ejecuta el experimento hasta llegar a la meta
-	        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
-	        		//Tenemos que definir de alguna forma un bucle "infinito"
-	        	terminado = false;
-	        	while(!terminado)
-	        		q.step();
-	        }
-	        
-	        long end = System.currentTimeMillis();
-	        long res = end - start;
-	        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.");
-	              
-			//Imprime el mejor camino
-	        imprimeMejorCamino();  
-	        
-	        //añade a pantalla los valores de la QTable
-	        imprimeValoresQTabla(); 
-	        
-	        //imprime el excel con la tabla de los estados visitados
-	        //imprimeTablaVisitas();
+
+    	//En este ArrayList almacenamos los nombres de los POSIBLES MAPAS
+    	ArrayList<String> lista_mapas = new ArrayList<String>();
+    	lista_mapas.add("mapa_facil.txt");
+    	lista_mapas.add("mapa_normal.txt");
+    	lista_mapas.add("mapa_dificil.txt");
+    	
+    	//alamcenaremos también el número de NUM_ITERACIONES_MAX_QLEARNER de cada mapa, ya que este valor varía en función de la longitud del mismo
+    	int[] num_iter_max = {100, 500, 2500};
+    	
+    	
+    	
+    	//Clase y ArrayList que vamos a utilizar para recorrer los POSIBLES VALORES DE ALPHA Y GAMMA
+    	class Par{
+    		private double alpha;
+    		private double gamma;
+    		public Par(double alpha, double gamma) {
+    			this.alpha = alpha;
+    			this.gamma = gamma;
+    		}
+    		public double getAlpha() { return this.alpha; }
+    		public double getGamma() { return this.gamma; }
     	}
+    	
+    	ArrayList<Par> alpha_gamma_list = new ArrayList<Par>();
+    	alpha_gamma_list.add(new Par(0.1, 0.1));
+    	alpha_gamma_list.add(new Par(0.1, 0.3));
+    	alpha_gamma_list.add(new Par(0.1, 0.5));
+    	alpha_gamma_list.add(new Par(0.1, 0.7));
+    	alpha_gamma_list.add(new Par(0.1, 0.9));
+    	alpha_gamma_list.add(new Par(0.3, 0.1));
+    	alpha_gamma_list.add(new Par(0.3, 0.3));
+    	alpha_gamma_list.add(new Par(0.3, 0.5));
+    	alpha_gamma_list.add(new Par(0.3, 0.7));
+    	alpha_gamma_list.add(new Par(0.3, 0.9));
+    	alpha_gamma_list.add(new Par(0.5, 0.1));
+    	alpha_gamma_list.add(new Par(0.5, 0.3));
+    	alpha_gamma_list.add(new Par(0.5, 0.5));
+    	alpha_gamma_list.add(new Par(0.5, 0.7));
+    	alpha_gamma_list.add(new Par(0.5, 0.9));
+    	alpha_gamma_list.add(new Par(0.7, 0.1));
+    	alpha_gamma_list.add(new Par(0.7, 0.3));
+    	alpha_gamma_list.add(new Par(0.7, 0.5));
+    	alpha_gamma_list.add(new Par(0.7, 0.7));
+    	alpha_gamma_list.add(new Par(0.7, 0.9));
+    	alpha_gamma_list.add(new Par(0.9, 0.1));
+    	alpha_gamma_list.add(new Par(0.9, 0.3));
+    	alpha_gamma_list.add(new Par(0.9, 0.5));
+    	alpha_gamma_list.add(new Par(0.9, 0.7));
+    	alpha_gamma_list.add(new Par(0.9, 0.9));
+    	
+    	
+    	
+    	long start_TOTAL = System.currentTimeMillis();
+    	
+    	for(String map: lista_mapas) //por cada mapa
+    	{
+    		InicializarTablero(map);
+    		
+			for(Par ag: alpha_gamma_list) //por cada posible par de alpha, gamma
+			{
+		    	double[] logFinal = new double[NUM_INTENTOS_APRENDIZAJE]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
+		    	for(int d=0; d<NUM_INTENTOS_APRENDIZAJE; d++)
+		    		logFinal[d] = 0;
+		    	
+		        //Realiza NUM_EXPERIMENTOS pruebas y va almacenando la media de los resultados        
+		    	for(int i=0; i<NUM_EXPERIMENTOS; i++)
+		    	{
+		        	//Con esto mediremos el tiempo de ejecución de cada intento (que aunque no es relevante a la hora de valorar
+		    			//la eficacia de las distintas estrategias, sí es útil para el "seguimiento" de la ejecución de los test.
+		            long start = System.currentTimeMillis();
+		    		
+		    		// 1.Inicializa y "resetea" las variables y tablas
+		    		InicializarQLearner(ag.getAlpha(), ag.getGamma(), num_iter_max[lista_mapas.indexOf(map)]);
+		    		
+		    		// 2.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
+				    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
+				    for(int j=0; j<NUM_INTENTOS_APRENDIZAJE; j++)
+				    {
+				    	//Ejecuta el experimento hasta llegar a la meta, morir o llegar al NUM_ITERACIONES
+				    	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
+						//Tenemos que definir de alguna forma un bucle "infinito"
+						//Lo hacemos mediante la varible "terminado" a la que el LaberintoEnvironment puede acceder.
+				    	terminado = false;
+				    	while(!terminado)
+				    		q.step();
+				    }
+				    
+				    // 3.Almacena los datos haciendo la MEDIA (/NUM_EXPERIMENTOS) de los mismos
+				    	//Nos interesa almacenar: 1. Número de pasos utilizados en llegar al final o morir (log)
+				    							//2. Número de veces que se accede a cada estado (tableroVisitas)
+				    
+				    ArrayList<String> log = Log.readLog("log.txt");
+				    
+				    int log_index = 0;
+				    for(String l: log)
+				    {	
+				    	if(l.compareToIgnoreCase("dead") == 0) //si el log es de muerto no podemos hacer la media, así que asignaremos el valor máximo
+				    	{
+				    		logFinal[log_index] = logFinal[log_index] + (double)num_iter_max[lista_mapas.indexOf(map)]/(double)NUM_EXPERIMENTOS;
+				    	}
+				    	else
+				    	{
+				    		logFinal[log_index] = logFinal[log_index] + Double.parseDouble(l)/(double)NUM_EXPERIMENTOS;
+				    	}
+				    	log_index++;
+				    }
+				    
+				    Log.deleteLog("log.txt");
+		 
+				    
+				    long end = System.currentTimeMillis();
+			        long res = end - start;
+			        System.out.println("EXPERIMENTO " + i + " TARDÓ : " + res/1000.0 + "segs.");
+		    	}
+
+		        //Imprime el log final
+		    	Excel.escribirLog(logFinal, "iters_" + map + "_" + ag.getAlpha() + "_" + ag.getGamma() + ".xlsx");
+			}
+    	
+    	}
+    	
+    	long end_TOTAL = System.currentTimeMillis();
+        long res_TOTAL = end_TOTAL - start_TOTAL;
+        System.out.println("--- LA EJECUCIÓN COMPLETA TARDÓ : " + res_TOTAL/1000.0 + "segs. ---");
+	
+		//Imprime el mejor camino
+        //imprimeMejorCamino();  
+        
+        //añade a pantalla los valores de la QTable
+        //imprimeValoresQTabla(); 
+        
+        //imprime el excel con la tabla de los estados visitados
+        //imprimeTablaVisitas();
     }
 
 	private void btCargarLaberintoActionPerformed(ActionEvent evt) {
-		cargado = true;
-    	InicializarTablero();
-    	InicializarQLearner();
+    	InicializarTablero("laberinto.txt");
+    	btEmpezar.setEnabled(true);
 	}
 
 
-    private void InicializarQLearner() {
+    private void InicializarQLearner(double alpha, double gamma, int num_iter_max_qlearner) {
     	LaberintoState casilla_inicial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
@@ -158,12 +264,12 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter);
         env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
-        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_MAX_ITER, this.numIter); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
+        q = new QLearner(env, qT, new LaberintoActionManager(), num_iter_max_qlearner, this.numIter, alpha, gamma); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
 	}
 
 
-	private void InicializarTablero() {
+	private void InicializarTablero(String map_name) {
     	//borramos el laberinto anterior
     	for(int j = 0; j < maxY;j++)
         {
@@ -181,7 +287,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	BufferedReader br = null;
         try
         {
-            fichero = new FileReader("laberinto.txt");
+            fichero = new FileReader(map_name);
             br = new BufferedReader(fichero);
  
             String linea;
@@ -310,7 +416,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
  
     private void imprimeTablaVisitas(){
-    	Office_VisitTable.escribirTabla(tableroVisitas,"visitMap.xlsx");
+    	Excel.escribirTabla(tableroVisitas,"visitMap.xlsx");
     }
     
     
