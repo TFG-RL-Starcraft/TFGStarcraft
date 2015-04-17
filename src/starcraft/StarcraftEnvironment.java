@@ -2,6 +2,7 @@ package starcraft;
 
 import java.util.ArrayList;
 
+import constants.Constants;
 import q_learning.Action;
 import q_learning.Environment;
 import q_learning.State;
@@ -100,9 +101,9 @@ public class StarcraftEnvironment implements Environment{
 
 		// Here you must enter all the rewards of learning
 		if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
+			reward = Constants.REWARD_LOST;
 		} else if(hasWon()) { //if the unit reaches the goal
-			reward = 1000;
+			reward = Constants.REWARD_WON;
 		} /*else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
 			reward = -10;
 //				} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state

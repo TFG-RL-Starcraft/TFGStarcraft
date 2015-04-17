@@ -10,6 +10,11 @@ import q_learning.State;
 
 public class LaberintoEnvironment implements Environment{
 	
+	public enum Policies //Enum with the possible reward policies
+	{
+	    BASIC, EUCLIDEAN_DISTANCE, LESS_STEPS, EUCLIDEAN_DISTANCE_AND_LESS_STEPS
+	}
+	
 	private int tableroVisitas[][];
 	
 	private int ancho, alto;
@@ -18,8 +23,12 @@ public class LaberintoEnvironment implements Environment{
 	private State previousState;
 	private Action previousAction;	
 	private ArrayList<Integer> listaEstadosMuerto;
+	private double won_reward, lost_reward;
+	private int max_iter;
+	private Policies policy_used;
+	
 
-	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, int[][] tableroVisitas, ArrayList<Integer> listaEstadosMuerto) {
+	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, int[][] tableroVisitas, ArrayList<Integer> listaEstadosMuerto, double won_reward, double lost_reward, int max_iter, Policies policy_used) {
 		this.ancho = ancho;
 		this.alto = alto;
 		this.init_state = state;
@@ -28,6 +37,10 @@ public class LaberintoEnvironment implements Environment{
 		this.previousState = null;
 		this.previousAction = null;
 		this.listaEstadosMuerto = listaEstadosMuerto;
+		this.won_reward = won_reward;
+		this.lost_reward = lost_reward;
+		this.max_iter = max_iter;
+		this.policy_used = policy_used;
 		
 		this.tableroVisitas = tableroVisitas;
 		for(int i = 0; i < alto; i++){
@@ -103,48 +116,56 @@ public class LaberintoEnvironment implements Environment{
 	
 	@Override
 	public double getReward(State state) {
-		//If the current distance to the final is bigger than the future increase the reward
+		
 		double reward = 0;
 		// Here you must enter all the rewards of learning
 		
-		//1. Politica básica
-		if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = Constants.REWARD_WON;
+		switch (this.policy_used) {
+	    	case BASIC:
+	    		//1. Politica básica
+	    		if(hasLost()) { //if the unit doesn't exist (lost game)
+	    			reward = this.lost_reward;
+	    		} else if(hasWon()) { //if the unit reaches the goal
+	    			reward = this.won_reward;
+	    		}
+	    	break;
+	    	case EUCLIDEAN_DISTANCE:
+	    		//2.Politica de recompensa por acercarse con la distancia euclidia
+	    		if(hasLost()) { //if the unit doesn't exist (lost game)
+	    			reward = this.lost_reward;
+	    		} else if(hasWon()) { //if the unit reaches the goal
+	    			reward = this.won_reward;
+	    		} else {
+	    			reward = getReward(state.getValue());
+	    		}
+		    break;
+	    	case LESS_STEPS:
+	    		//3. Politica de recompensa por llegar con el menor numero de pasos a la meta
+	    		if(hasLost()) { //if the unit doesn't exist (lost game)
+	    			reward = this.lost_reward;
+	    		} else if(hasWon()) { //if the unit reaches the goal
+	    			reward = function();
+	    		}
+		    break;
+	    	case EUCLIDEAN_DISTANCE_AND_LESS_STEPS:
+	    		//4. Politicas 2 y 3 unidas
+	    		if(hasLost()) { //if the unit doesn't exist (lost game)
+	    			reward = this.lost_reward;
+	    		} else if(hasWon()) { //if the unit reaches the goal
+	    			reward = function();
+	    		} else {
+	    			reward = getReward(state.getValue());
+	    		}
+		    break;
 		}
-		
-		//2.Politica de recompensa por acercarse con la distancia euclidia
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = function();
-		} else {
-			reward = getReward(state.getValue());
-		}*/
-		
-		//3. Politica de recompensa por llegar con el menor numero de pasos a la meta
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = function();
-		}*/
-		
-		//4. Politicas 2 y 3 unidas
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = function();
-		} else {
-			reward = getReward(state.getValue());
-		}*/		
 		
 		return reward;
 	}
 	
+	
 	private double function(){
-		double A = (Constants.REWARD_WON - 10.0) / Math.pow(Constants.NUM_PASOS,2);
-		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + Constants.REWARD_WON;		
+		double A = (this.won_reward - 10.0) / Math.pow(this.max_iter, 2);
+		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + this.won_reward;		
 		return reward;
 	}
 	
