@@ -23,20 +23,22 @@ public class Presenter {
     private Unit unit;
     private int box_size;
     private StarcraftActionManager starcraftActionManager;
+    private int numIter;
     
     
-	public Presenter(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager) {
+	public Presenter(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager,int numIter) {
 		this.game = game;
 		this.unit = unit;
 		this.box_size = box_size;
 		this.starcraftActionManager = starcraftActionManager;
+		this.numIter = numIter;
 	}
 
 	/**
 	 * Initialization method and instantiation of the Presenter class.
 	 */
-	public static void setInstance(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager) {
-			instance = new Presenter(game, unit, box_size, starcraftActionManager);
+	public static void setInstance(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager,int numIter) {
+			instance = new Presenter(game, unit, box_size, starcraftActionManager,numIter);
 	}	
 	
 	/**
@@ -64,5 +66,9 @@ public class Presenter {
 
 	public StarcraftActionManager getStarcraftActionManager() {
 		return this.starcraftActionManager;
+	}
+	
+	public int getNumIter(){
+		return numIter;
 	}
 }

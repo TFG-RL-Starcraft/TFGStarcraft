@@ -62,15 +62,9 @@ public class Main_Starcraft{
                 
                 marine = getMarine();
                 System.out.println("Map data ready");
-                
+                numIter = 0; 
               //Inicializa Presentador ----------------------------------------------------------------------------
-				Presenter.setInstance(game, marine, 32, new StarcraftActionManager());
-                
-//                System.out.println("HEIGHT: " + game.mapHeight() + " WIDTH: " + game.mapWidth());
-//				System.out.println("MarineX: " + marine.getPosition().getX() / 32 + " MarineY: "
-//						+ marine.getPosition().getY() / 32);
-				
-				// INICIO - Crear estados finales
+				Presenter.setInstance(game, marine, 32, new StarcraftActionManager(),numIter);
                 
                 ArrayList<State> finalStateList = new ArrayList<State>();
                 ArrayList<Position> positions = getBalizas();
@@ -80,16 +74,13 @@ public class Main_Starcraft{
 	                finalStateList.add(finalState);
                 }
                 
-                // FIN - Crear estado
-                
 				//State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
 				Environment e = new StarcraftEnvironment(game, marine, finalStateList);
 				
 				QTable qT = IO_QTable.leerTabla("qtabla.txt");
 				if(qT == null) {
 					qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
-				}
-				numIter = 0;
+				}				
 				q = new QLearner(e, qT, new StarcraftActionManager(),MAX_ITER,numIter);
 				qp = new QPlayer(e, qT, new StarcraftActionManager());
 				

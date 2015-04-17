@@ -105,19 +105,39 @@ public class LaberintoEnvironment implements Environment{
 	public double getReward(State state) {
 		//If the current distance to the final is bigger than the future increase the reward
 		double reward = 0;
-
 		// Here you must enter all the rewards of learning
+		
+		//1. Politica básica
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = -1;
 		} else if(hasWon()) { //if the unit reaches the goal
+			reward = Constants.REWARD_WON;
+		}
+		
+		//2.Politica de recompensa por acercarse con la distancia euclidia
+		/*if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = -1;
+		} else if(hasWon()) { //if the unit reaches the goal
 			reward = function();
-		} /*else if(previousState() != null && previousState().getValue() == state().getValue()) { //the prev. state is the same, then the action taken doesnt changed the state (not a valid movement)
-			reward = -10;
-//				} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state
-//					reward = 0;
-		} else{
+		} else {
 			reward = getReward(state.getValue());
 		}*/
+		
+		//3. Politica de recompensa por llegar con el menor numero de pasos a la meta
+		/*if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = -1;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = function();
+		}*/
+		
+		//4. Politicas 2 y 3 unidas
+		/*if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = -1;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = function();
+		} else {
+			reward = getReward(state.getValue());
+		}*/		
 		
 		return reward;
 	}
