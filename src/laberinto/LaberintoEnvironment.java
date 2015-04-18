@@ -2,7 +2,6 @@ package laberinto;
 
 import java.util.ArrayList;
 
-import constants.Constants;
 import laberinto.actions.LaberintoActionManager;
 import q_learning.Action;
 import q_learning.Environment;
@@ -12,7 +11,10 @@ public class LaberintoEnvironment implements Environment{
 	
 	public enum Policies //Enum with the possible reward policies
 	{
-	    BASIC, EUCLIDEAN_DISTANCE, LESS_STEPS, EUCLIDEAN_DISTANCE_AND_LESS_STEPS
+	    BASIC, 
+	    EUCLIDEAN_DISTANCE, 
+	    LESS_STEPS, 
+	    EUCLIDEAN_DISTANCE_AND_LESS_STEPS
 	}
 	
 	private int tableroVisitas[][];
@@ -180,18 +182,17 @@ public class LaberintoEnvironment implements Environment{
 	}
 
 	private double euclideanReward(int newState) {
-		double reward = 1.0 - Constants.GAMMA; //0.9
+		double reward = 1.0;
 		
 		if(previousState != null) {
 			double previousDist = euclideanDist(previousState().getValue(), lastState.getValue());
 			double currentDist = euclideanDist(newState, lastState.getValue());
+			double totalDist = euclideanDist(init_state.getValue(), lastState.getValue());
 			
-			if(previousDist != currentDist) { // if it's at the same distance -> 0.9 reward
-				if(previousDist > currentDist) { // if it's closer -> 0.9666 reward 
-					reward = 1.0 - Constants.GAMMA + (Constants.GAMMA / 1.5);
-				}else{ // if it's further -> 0.0 reward
-					reward = 0.0;
-				}
+			if(previousDist > currentDist) { // if it's closer -> the proportional reward of 1.0 (more reward when more approaches)
+				reward = reward - reward*(currentDist-totalDist);
+			}else{ // if it's further -> 0.0 reward
+				reward = 0.0;
 			}
 		}
 		
