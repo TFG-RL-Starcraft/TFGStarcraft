@@ -43,8 +43,8 @@ public class LaberintoEnvironment implements Environment{
 		this.policy_used = policy_used;
 		
 		this.tableroVisitas = tableroVisitas;
-		for(int i = 0; i < alto; i++){
-			for(int j = 0; j < ancho; j++){
+		for(int i = 0; i < tableroVisitas.length; i++){
+			for(int j = 0; j < tableroVisitas[i].length; j++){
 				tableroVisitas[i][j] = 0;
 			}
 		}
@@ -76,8 +76,9 @@ public class LaberintoEnvironment implements Environment{
 	
 	private void updateNumberOfVisitsTable(){
 		State s = state();	
-		int y = (int)(s.getValue() /  alto);
 		int x = s.getValue() % ancho;
+		int y = (int)(s.getValue() / ancho);
+		
 		tableroVisitas[x][y]++;
 	}
 

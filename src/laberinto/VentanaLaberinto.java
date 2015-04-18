@@ -52,7 +52,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     private QLearner q; //guarda la referencia a toda la estructura del ejercicio
     private Environment env;
     QTable qT;  
-    int[][] tableroVisitas; //tabla en la que guardamos cuantas veces se pasa por cada estado
+    int[][] tablaVisitas; //tabla en la que guardamos cuantas veces se pasa por cada estado
     
     ArrayList<Integer> listaEnemigos; //arraylist con los indices de los estados de las casillas con enemigo
     
@@ -117,9 +117,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     	//En este ArrayList almacenamos los nombres de los POSIBLES MAPAS
     	ArrayList<String> lista_mapas = new ArrayList<String>();
-    	lista_mapas.add("mapa_facil.txt");
+    	//lista_mapas.add("mapa_facil.txt");
     	lista_mapas.add("mapa_normal.txt");
-    	lista_mapas.add("mapa_dificil.txt");
+    	//lista_mapas.add("mapa_dificil.txt");
     	
     	//almacenaremos también el número de NUM_ITERACIONES_MAX_QLEARNER de cada mapa (en orden), ya que este valor varía en función de la longitud del mismo
     	int[] num_iter_max = {100, 500, 2500};
@@ -214,7 +214,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 				    	}
 		
 				    	//Imprime la tabla de estados visitados
-				    	Excel.escribirTabla(tableroVisitas, "visits_" + map + "_" + policies[pol_indx].name() + ".xlsx");
+				    	Excel.escribirTabla(tablaVisitas, "visits_" + map + "_" + policies[pol_indx].name() + ".xlsx");
 //				    	Excel.escribirTabla(tableroVisitas, "visits_" + map + "_" + policies[pol_indx].name() + "_" + won_value + "_" + lost_value+ ".xlsx");
 				    	
 				        //Imprime el log final
@@ -249,10 +249,10 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	LaberintoState casilla_inicial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
-        tableroVisitas = new int[maxY][maxX];
+        tablaVisitas = new int[maxX][maxY];
         this.numIter = new int[1]; this.numIter[0] = 0;
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter);
-        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
+        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tablaVisitas, listaEnemigos, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
         q = new QLearner(env, qT, new LaberintoActionManager(), num_iter_max_qlearner, this.numIter, alpha, gamma); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
