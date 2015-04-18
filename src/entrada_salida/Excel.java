@@ -12,7 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Excel {
-	public static void escribirTabla(int[][] Table, String path){
+	public static void escribirTabla(double[][] Table, String path){
 		if(path!=null){
 			//Blank workbook
 	        XSSFWorkbook workbook = null;

@@ -64,7 +64,7 @@ public class LaberintoEnvironment implements Environment{
 	public void execute(Action action) {
 		
 		// First update the table with the number of visits
-		updateNumberOfVisitsTable();
+		updateNumberOfVisitsTable(state());
 		
 		// Update the previous state and action before modifying the current state
 		this.previousState = state();
@@ -74,8 +74,7 @@ public class LaberintoEnvironment implements Environment{
 		action.execute();
 	}
 	
-	private void updateNumberOfVisitsTable(){
-		State s = state();	
+	private void updateNumberOfVisitsTable(State s){
 		int x = s.getValue() % ancho;
 		int y = (int)(s.getValue() / ancho);
 		

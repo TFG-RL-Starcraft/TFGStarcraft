@@ -117,9 +117,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     	//En este ArrayList almacenamos los nombres de los POSIBLES MAPAS
     	ArrayList<String> lista_mapas = new ArrayList<String>();
-    	//lista_mapas.add("mapa_facil.txt");
+    	lista_mapas.add("mapa_facil.txt");
     	lista_mapas.add("mapa_normal.txt");
-    	//lista_mapas.add("mapa_dificil.txt");
+    	lista_mapas.add("mapa_dificil.txt");
     	
     	//almacenaremos también el número de NUM_ITERACIONES_MAX_QLEARNER de cada mapa (en orden), ya que este valor varía en función de la longitud del mismo
     	int[] num_iter_max = {100, 500, 2500};
@@ -159,8 +159,13 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 //					{
 											
 				    	double[] logFinal = new double[num_intentos]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
-				    	for(int d=0; d<num_intentos; d++)
-				    		logFinal[d] = 0;
+				    	for(int i=0; i<num_intentos; i++)
+				    		logFinal[i] = 0;
+				    	
+				    	double[][] visitasFinal = new double[maxX][maxY]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
+				    	for(int i=0; i<maxX; i++)
+				    		for(int j=0; j<maxY; j++)
+				    			visitasFinal[i][j] = 0;
 				    	
 				        //Realiza NUM_EXPERIMENTOS pruebas y va almacenando la media de los resultados        
 				    	for(int i=0; i<num_exper; i++)
@@ -188,7 +193,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 						    // 3.Almacena los datos haciendo la MEDIA (/NUM_EXPERIMENTOS) de los mismos
 						    	//Nos interesa almacenar: 1. Número de pasos utilizados en llegar al final o morir (log)
 						    							//2. Número de veces que se accede a cada estado (tableroVisitas)
-						    
+						    //1.
 						    ArrayList<String> log = Log.readLog("log.txt");
 						    
 						    int log_index = 0;
@@ -207,6 +212,14 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 						    
 						    Log.deleteLog("log.txt");
 				 
+						    //2.
+						    for(int i2=0; i2<maxX; i2++)
+						    {
+					    		for(int j2=0; j2<maxY; j2++)
+					    		{
+					    			visitasFinal[i2][j2] = visitasFinal[i2][j2] + tablaVisitas[i2][j2]/(double)num_exper;
+					    		}
+						    }
 						    
 						    long end = System.currentTimeMillis();
 					        long res = end - start;
@@ -214,8 +227,8 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 				    	}
 		
 				    	//Imprime la tabla de estados visitados
-				    	Excel.escribirTabla(tablaVisitas, "visits_" + map + "_" + policies[pol_indx].name() + ".xlsx");
-//				    	Excel.escribirTabla(tableroVisitas, "visits_" + map + "_" + policies[pol_indx].name() + "_" + won_value + "_" + lost_value+ ".xlsx");
+				    	Excel.escribirTabla(visitasFinal, "visits_" + map + "_" + policies[pol_indx].name() + ".xlsx");
+//				    	Excel.escribirTabla(visitasFinal, "visits_" + map + "_" + policies[pol_indx].name() + "_" + won_value + "_" + lost_value+ ".xlsx");
 				    	
 				        //Imprime el log final
 				    	Excel.escribirLog(logFinal, "iters_" + map + "_" + policies[pol_indx].name() + ".xlsx");
