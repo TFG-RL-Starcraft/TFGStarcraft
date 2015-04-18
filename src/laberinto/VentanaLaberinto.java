@@ -44,7 +44,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
     private Casilla salida;
     private Casilla meta;  
-    private int numIter;
+    private int[] numIter;
     
     private LaberintoState estado_actual;
     private boolean terminado;
@@ -130,16 +130,16 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	
     	
     	//ArrayList que vamos a utilizar para recorrer los POSIBLES VALORES DE RECOMPENSA    	
-    	ArrayList<Double> won_reward_list = new ArrayList<Double>();
-    	won_reward_list.add(1000.0);
-    	won_reward_list.add(10000.0);
-    	won_reward_list.add(100000.0);
-    	
-    	ArrayList<Double> lost_reward_list = new ArrayList<Double>();
-    	lost_reward_list.add(-1.0);
-    	lost_reward_list.add(-0.5);
-    	lost_reward_list.add(-0.1);
-    	lost_reward_list.add(0.0);
+//    	ArrayList<Double> won_reward_list = new ArrayList<Double>();
+//    	won_reward_list.add(1000.0);
+//    	won_reward_list.add(10000.0);
+//    	won_reward_list.add(100000.0);
+//    	
+//    	ArrayList<Double> lost_reward_list = new ArrayList<Double>();
+//    	lost_reward_list.add(-1.0);
+//    	lost_reward_list.add(-0.5);
+//    	lost_reward_list.add(-0.1);
+//    	lost_reward_list.add(0.0);
     	
     	
     	long start_TOTAL = System.currentTimeMillis();
@@ -152,11 +152,11 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     		for(int pol_indx=0; pol_indx<policies.length; pol_indx++) //por cada una de las políticas
     		{
     		
-				for(Double won_value: won_reward_list) //por cada posible par de alpha, gamma
-				{
-					
-					for(Double lost_value: lost_reward_list) //por cada posible par de alpha, gamma
-					{
+//				for(Double won_value: won_reward_list) //por cada posible par de alpha, gamma
+//				{
+//					
+//					for(Double lost_value: lost_reward_list) //por cada posible par de alpha, gamma
+//					{
 											
 				    	double[] logFinal = new double[num_intentos]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
 				    	for(int d=0; d<num_intentos; d++)
@@ -170,7 +170,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 				            long start = System.currentTimeMillis();
 				    		
 				    		// 1.Inicializa y "resetea" las variables y tablas
-				    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, num_iter_max[lista_mapas.indexOf(map)], won_value, lost_value, policies[pol_indx]);
+				    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, num_iter_max[lista_mapas.indexOf(map)], Constants.REWARD_WON, Constants.REWARD_LOST, policies[pol_indx]);
 				    		
 				    		// 2.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
 						    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
@@ -213,10 +213,15 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 					        System.out.println("EXPERIMENTO " + i + " TARDÓ : " + res/1000.0 + "segs.");
 				    	}
 		
+				    	//Imprime la tabla de estados visitados
+				    	Excel.escribirTabla(tableroVisitas, "visits_" + map + "_" + policies[pol_indx].name() + ".xlsx");
+//				    	Excel.escribirTabla(tableroVisitas, "visits_" + map + "_" + policies[pol_indx].name() + "_" + won_value + "_" + lost_value+ ".xlsx");
+				    	
 				        //Imprime el log final
-				    	Excel.escribirLog(logFinal, "policies_" + map + "_" + policies[pol_indx].name() + "_" + won_value + "_" + lost_value+ ".xlsx");
-					}
-				}
+				    	Excel.escribirLog(logFinal, "iters_" + map + "_" + policies[pol_indx].name() + ".xlsx");
+//				    	Excel.escribirLog(logFinal, "iters_" + map + "_" + policies[pol_indx].name() + "_" + won_value + "_" + lost_value+ ".xlsx");
+//					}
+//				}
     		}
     	}
     	
@@ -245,7 +250,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
         tableroVisitas = new int[maxY][maxX];
-        this.numIter = 0;
+        this.numIter = new int[1]; this.numIter[0] = 0;
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter);
         env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
@@ -400,11 +405,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     }
 
  
-    private void imprimeTablaVisitas(){
-    	Excel.escribirTabla(tableroVisitas,"visitMap.xlsx");
-    }
-    
-    
     private void imprimeValoresQTabla() {
     	for(int i = 0; i < maxX ; i++)
         {

@@ -1,8 +1,6 @@
 package q_learning;
 
-import constants.Constants;
 import entrada_salida.Log;
-
 
 public class QLearner {
 
@@ -12,10 +10,10 @@ public class QLearner {
 	private Environment environment;
 	private QTable qTable;
 	private ActionManager actionManager;
-	private int numIter;
+	private int[] numIter; //this value is a vector in order to simulate passing it by reference (because java pass the Integers by value always)
 	private int maxNumIter;
 		
-	public QLearner(Environment environment, QTable qTable, ActionManager actionManager, int maxNumIter, int numIter, double alpha, double gamma)
+	public QLearner(Environment environment, QTable qTable, ActionManager actionManager, int maxNumIter, int[] numIter, double alpha, double gamma)
 	{
 		this.ALPHA = alpha;
 		this.GAMMA = gamma;
@@ -47,26 +45,26 @@ public class QLearner {
 				// Update Q-Table
 				//Q(s,a) = Q(s,a) + alpha( r + gamma * max a'(Q(s', a')) - Q(s,a) )
 				double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));	
-				newValue = Math.max(0, newValue); //TODO, ver hasta qué punto tiene sentido este max
+				newValue = Math.max(0, newValue); //this max is to prevent negative values
 				qTable.set(state, action, newValue);		
 			}
 
 			// 2. Ask if the current state is final, and restart in that case; else perform an action
 
-			if(environment.isFinalState() || numIter >= maxNumIter ) {		
+			if(environment.isFinalState() || numIter[0] >= maxNumIter ) {		
 				
 									//TODO este if/else es sólo para debug
-									if( reward == -1 && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
+									if( reward == -1 && numIter[0] != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
 										Log.printLog("log.txt", "dead");
 									}
 									else
 									{
-										Log.printLog("log.txt", Integer.toString(numIter));
+										Log.printLog("log.txt", Integer.toString(numIter[0]));
 									}										
 
 				environment.reset();
-				numIter = 0;
+				numIter[0] = 0;
 				
 			} else {
 				
@@ -78,7 +76,7 @@ public class QLearner {
 				// Execute action
 				environment.execute(newAction);
 				
-				numIter++;
+				numIter[0]++;
 			}
 
 		}

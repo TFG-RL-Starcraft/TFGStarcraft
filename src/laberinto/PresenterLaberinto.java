@@ -10,19 +10,19 @@ private static PresenterLaberinto instance = null;
 	private int ancho, alto;
     private LaberintoActionManager laberintoActionManager;
     boolean terminado;
-    private int numIter;
+    private int numIter[];
     
-	public PresenterLaberinto(VentanaLaberinto game, LaberintoActionManager laberintoActionManager, boolean terminado, int ancho, int alto,int numiter) {
+	public PresenterLaberinto(VentanaLaberinto game, LaberintoActionManager laberintoActionManager, boolean terminado, int ancho, int alto, int[] numIter) {
 		this.game = game;
 		this.laberintoActionManager = laberintoActionManager;
 		this.terminado = terminado;
 		this.ancho = ancho;
 		this.alto = alto;
-		this.numIter = numiter;
+		this.numIter = numIter;
 	}
 
-	public static void setInstance(VentanaLaberinto game, LaberintoActionManager laberintoActionManager, boolean terminado, int ancho, int alto,int numIter) {
-			instance = new PresenterLaberinto(game, laberintoActionManager, terminado, ancho, alto,numIter);
+	public static void setInstance(VentanaLaberinto game, LaberintoActionManager laberintoActionManager, boolean terminado, int ancho, int alto, int[]  numIter) {
+			instance = new PresenterLaberinto(game, laberintoActionManager, terminado, ancho, alto, numIter);
 	}	
 
 	public static PresenterLaberinto getInstance()
@@ -53,6 +53,6 @@ private static PresenterLaberinto instance = null;
 	}
 	
 	public int getNumIter(){
-		return numIter;
+		return numIter[0];
 	}
 }

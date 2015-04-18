@@ -136,7 +136,7 @@ public class LaberintoEnvironment implements Environment{
 	    		} else if(hasWon()) { //if the unit reaches the goal
 	    			reward = this.won_reward;
 	    		} else {
-	    			reward = getReward(state.getValue());
+	    			reward = euclideanReward(state.getValue());
 	    		}
 		    break;
 	    	case LESS_STEPS:
@@ -144,7 +144,7 @@ public class LaberintoEnvironment implements Environment{
 	    		if(hasLost()) { //if the unit doesn't exist (lost game)
 	    			reward = this.lost_reward;
 	    		} else if(hasWon()) { //if the unit reaches the goal
-	    			reward = function();
+	    			reward = stepDependantReward();
 	    		}
 		    break;
 	    	case EUCLIDEAN_DISTANCE_AND_LESS_STEPS:
@@ -152,22 +152,15 @@ public class LaberintoEnvironment implements Environment{
 	    		if(hasLost()) { //if the unit doesn't exist (lost game)
 	    			reward = this.lost_reward;
 	    		} else if(hasWon()) { //if the unit reaches the goal
-	    			reward = function();
+	    			reward = stepDependantReward();
 	    		} else {
-	    			reward = getReward(state.getValue());
+	    			reward = euclideanReward(state.getValue());
 	    		}
 		    break;
 		}
 		
 		return reward;
-	}
-	
-	
-	private double function(){
-		double A = (this.won_reward - 10.0) / Math.pow(this.max_iter, 2);
-		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + this.won_reward;		
-		return reward;
-	}
+	}	
 	
 	@Override
 	public void reset() {
@@ -177,8 +170,16 @@ public class LaberintoEnvironment implements Environment{
 		this.lastState = this.init_lastState;
 		PresenterLaberinto.getInstance().getGame().setTerminado(true);
 	}
+	
+	
+	
+	private double stepDependantReward(){
+		double A = (this.won_reward - 10.0) / Math.pow(this.max_iter, 2);		
+		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + this.won_reward;		
+		return reward;
+	}
 
-	private double getReward(int newState){
+	private double euclideanReward(int newState){
 		double reward = 1.0 - Constants.GAMMA;
 		
 		if(previousState != null){
@@ -197,10 +198,10 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	private double euclideanDist(int newState){
+	private double euclideanDist(int state){
 		double dist = Double.MAX_VALUE;
-		int actualY = (int)(newState /  alto);
-		int actualX = newState % ancho;
+		int actualY = (int)(state /  alto);
+		int actualX = state % ancho;
 									
 		int futureY = (int)(lastState.getValue() /  alto);
 		int futureX = lastState.getValue() % ancho;

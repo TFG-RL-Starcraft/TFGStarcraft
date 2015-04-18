@@ -24,9 +24,9 @@ public class Excel {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-	        int nSheets = workbook.getNumberOfSheets();
+			
 	        //Create a blank sheet
-	        XSSFSheet sheet = workbook.createSheet("visit table".concat(Integer.toString(nSheets)));
+	        XSSFSheet sheet = workbook.createSheet("Visited States_".concat(Integer.toString(workbook.getNumberOfSheets())));
 
 	        for(int i = 0; i < Table.length; i++){
 	        	Row row = sheet.createRow(i);
@@ -67,7 +67,7 @@ public class Excel {
 			}
 	         
 	        //Create a blank sheet
-	        XSSFSheet sheet = workbook.createSheet("Iterations");
+	        XSSFSheet sheet = workbook.createSheet("Iterations_".concat(Integer.toString(workbook.getNumberOfSheets())));
 	        
 	        for(int i=0; i<log.length; i++)
 	        {
