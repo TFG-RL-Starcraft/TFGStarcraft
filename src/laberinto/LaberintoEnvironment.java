@@ -18,6 +18,8 @@ public class LaberintoEnvironment implements Environment{
 	private State previousState;
 	private Action previousAction;	
 	private ArrayList<Integer> listaEstadosMuerto;
+	
+	private boolean visitState[][];
 
 	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, int[][] tableroVisitas, ArrayList<Integer> listaEstadosMuerto) {
 		this.ancho = ancho;
@@ -30,9 +32,11 @@ public class LaberintoEnvironment implements Environment{
 		this.listaEstadosMuerto = listaEstadosMuerto;
 		
 		this.tableroVisitas = tableroVisitas;
+		this.visitState = new boolean[alto][ancho];
 		for(int i = 0; i < alto; i++){
 			for(int j = 0; j < ancho; j++){
-				tableroVisitas[i][j] = 0;
+				this.tableroVisitas[i][j] = 0;
+				this.visitState[i][j] = false;
 			}
 		}
 	}
@@ -156,6 +160,12 @@ public class LaberintoEnvironment implements Environment{
 		PresenterLaberinto.getInstance().getGame().setEstadoActual(init_state);
 		this.lastState = this.init_lastState;
 		PresenterLaberinto.getInstance().getGame().setTerminado(true);
+		
+		for(int i = 0; i < alto; i++){
+			for(int j = 0; j < ancho; j++){
+				this.visitState[i][j] = false;
+			}
+		}
 	}
 
 	private double getReward(int newState){
@@ -166,15 +176,33 @@ public class LaberintoEnvironment implements Environment{
 			double futureDist = euclideanDist(newState);
 			
 			if(currentDist!=futureDist){
-				if(currentDist>futureDist){
-					reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 2);
-				}else{
+				if(!isRepeated(previousState().getValue())){								
+					if(currentDist>futureDist){
+						reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 3);
+					}else{
+						reward = 0.0;
+					}
 					reward = 0.0;
+				}else{
+					markAsVisit(previousState().getValue());
+					reward = -3.5;
 				}
 			}
 		}
 		
 		return reward;
+	}
+	
+	private boolean isRepeated(int state){
+		int actualY = (int)(state /  alto);
+		int actualX = state % ancho;
+		return this.visitState[actualX][actualY];
+	}
+	
+	private void markAsVisit(int state){
+		int actualY = (int)(state /  alto);
+		int actualX = state % ancho;
+		this.visitState[actualX][actualY] = true;
 	}
 	
 	private double euclideanDist(int newState){

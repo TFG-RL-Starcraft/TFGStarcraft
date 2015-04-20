@@ -1,7 +1,9 @@
 package q_learning;
 
+import laberinto.PresenterLaberinto;
 import constants.Constants;
 import entrada_salida.Log;
+import entrada_salida.Office_VisitTable;
 
 
 public class QLearner {
@@ -56,10 +58,12 @@ public class QLearner {
 									//TODO este if/else es sólo para debug
 									if( reward == Constants.REWARD_LOSE && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
+										//Office_VisitTable.escribirLog("Libro1.xlsx", 0, PresenterLaberinto.getInstance().getNumExp());
 										Log.printLog("log.txt", "dead");
 									}
 									else
 									{
+										//Office_VisitTable.escribirLog("Libro1.xlsx", this.numIter, PresenterLaberinto.getInstance().getNumExp());
 										Log.printLog("log.txt", Integer.toString(numIter));
 									}										
 
