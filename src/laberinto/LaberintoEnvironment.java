@@ -108,15 +108,15 @@ public class LaberintoEnvironment implements Environment{
 		// Here you must enter all the rewards of learning
 		
 		//1. Politica básica
-		if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
+		/*if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
 			reward = Constants.REWARD_WON;
-		}
+		}*/
 		
 		//2.Politica de recompensa por acercarse con la distancia euclidia
 		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
+			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
 			reward = function();
 		} else {
@@ -124,20 +124,21 @@ public class LaberintoEnvironment implements Environment{
 		}*/
 		
 		//3. Politica de recompensa por llegar con el menor numero de pasos a la meta
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
+		/*if(hasLost()) { //if the unit doesn't exist (lost game)+
+			System.out.println(Constants.REWARD_LOSE);
+			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
 			reward = function();
 		}*/
 		
 		//4. Politicas 2 y 3 unidas
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = -1;
+		if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
 			reward = function();
 		} else {
 			reward = getReward(state.getValue());
-		}*/		
+		}		
 		
 		return reward;
 	}
@@ -166,7 +167,7 @@ public class LaberintoEnvironment implements Environment{
 			
 			if(currentDist!=futureDist){
 				if(currentDist>futureDist){
-					reward = 1.0 - Constants.GAMMA + (Constants.GAMMA / 1.5);
+					reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 2);
 				}else{
 					reward = 0.0;
 				}

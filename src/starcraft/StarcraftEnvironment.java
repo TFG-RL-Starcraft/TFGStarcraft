@@ -16,7 +16,6 @@ public class StarcraftEnvironment implements Environment{
 	private Unit unit;
 	private State previousState;
 	private Action previousAction;
-	private boolean unitIsDead = false;
 	//we don not need to save the current state, because we get it in runtime
 	private ArrayList<Integer> finalState; //array with the hash values of all possible final states 
 	//private VisitedStateTable vTable;
@@ -45,7 +44,6 @@ public class StarcraftEnvironment implements Environment{
 
 	@Override
 	public void execute(Action action) {
-
 		// Update the previous state and action before modifying the current state
 		this.previousState = state();
 		this.previousAction = action;

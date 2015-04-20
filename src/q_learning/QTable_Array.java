@@ -1,5 +1,7 @@
 package q_learning;
 
+import constants.Constants;
+
 
 public class QTable_Array implements QTable {
 
@@ -16,7 +18,7 @@ public class QTable_Array implements QTable {
 	public void clear() {
 		for (int i=0; i<table.length; i++) {
 			for (int j=0; j<table[i].length; j++) {
-				table[i][j] = 1;
+				table[i][j] = Constants.QTABLE_INIT_VALUE;
 			}
 		}
 		// Could also follow the random initialization policy  

@@ -54,7 +54,7 @@ public class QLearner {
 			if(environment.isFinalState() || numIter >= maxNumIter ) {		
 				
 									//TODO este if/else es sólo para debug
-									if( reward == -1 && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
+									if( reward == Constants.REWARD_LOSE && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
 										Log.printLog("log.txt", "dead");
 									}

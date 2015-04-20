@@ -1,6 +1,5 @@
 package entrada_salida;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
@@ -12,7 +11,7 @@ public class Log {
         PrintWriter pw = null;
         
         //verifies if the file exists
-        File f = new File(path);
+        //File f = new File(path);
         
         try
         {
