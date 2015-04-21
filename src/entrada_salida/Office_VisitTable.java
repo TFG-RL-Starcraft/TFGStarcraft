@@ -122,8 +122,7 @@ public class Office_VisitTable {
 	            FileOutputStream out = new FileOutputStream(new File(path));
 	            workbook.write(out);
 	            out.close();
-	            File oldLog = new File(fichero);
-	            oldLog.delete();
+	            fr.close();
 	        }
 	        catch (Exception e)
 	        {

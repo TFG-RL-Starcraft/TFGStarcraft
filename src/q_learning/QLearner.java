@@ -55,13 +55,11 @@ public class QLearner {
 									//TODO este if/else es sólo para debug
 									if( reward == Constants.REWARD_LOSE && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
-										//Office_VisitTable.escribirLog("Libro1.xlsx", 0, PresenterLaberinto.getInstance().getNumExp());
-										Log.printLog("log.txt", "dead");
+										Log.printLog(Constants.NAME_FILE_LOG, "dead");
 									}
 									else
 									{
-										//Office_VisitTable.escribirLog("Libro1.xlsx", this.numIter, PresenterLaberinto.getInstance().getNumExp());
-										Log.printLog("log.txt", Integer.toString(numIter));
+										Log.printLog(Constants.NAME_FILE_LOG, Integer.toString(numIter));
 									}										
 
 				environment.reset();

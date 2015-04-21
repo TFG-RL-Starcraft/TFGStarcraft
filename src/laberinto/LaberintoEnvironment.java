@@ -261,12 +261,14 @@ public class LaberintoEnvironment implements Environment{
 	 * @return reward in function depending on whether the State has previously visited 
 	 */
 	private double repeatedState(){
-		double reward;
-		if(!isRepeated(previousState().getValue())){								
-			reward = 1.0 - Constants.GAMMA;
-		}else{
-			markAsVisit(previousState().getValue());
-			reward = Constants.REWARD_REPEATED;
+		double reward = 1.0 - Constants.GAMMA;;
+		if(previousState!=null){
+			if(!isRepeated(previousState().getValue())){								
+				reward = 1.0 - Constants.GAMMA;
+			}else{
+				markAsVisit(previousState().getValue());
+				reward = Constants.REWARD_REPEATED;
+			}
 		}
 		return reward;
 	}

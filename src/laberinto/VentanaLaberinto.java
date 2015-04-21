@@ -115,8 +115,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
     		
     		for(int x = 0; x < Constants.NUM_POLITICAS; x++){
+    			Log.deleteLog(Constants.NAME_FILE_LOG);
     			Constants.POLITICA = x;
-  
+    			System.out.println("Politica actual = " + Constants.POLITICA);
 		        //Repetir este experimento num_iter veces
 		        for(int i = 0; i < Constants.REPETICIONES;i++){
 		        	int numExp = 0;
