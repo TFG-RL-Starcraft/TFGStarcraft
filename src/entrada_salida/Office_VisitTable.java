@@ -161,9 +161,9 @@ public class Office_VisitTable {
 				Row row = sheet.getRow(i);
 				if(row==null)
 					row = sheet.createRow(i);    
-				Cell c = row.getCell(1);
+				Cell c = row.getCell(2);
 				if(c==null)
-					c = row.createCell(1);
+					c = row.createCell(2);
 				log[i] = log[i] / Constants.REPETICIONES;
 				c.setCellValue(log[i]);     
 	        }

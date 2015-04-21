@@ -105,9 +105,9 @@ public class StarcraftEnvironment implements Environment{
 			reward = -10;
 //				} else if(vTable.get(state().getValue())) { //anti-loops: the unit is in a visited state
 //					reward = 0;
-		} else{
+		} */else{
 			reward = getReward(state.getValue());
-		}*/	
+		}
 		
 		return reward;
 	}

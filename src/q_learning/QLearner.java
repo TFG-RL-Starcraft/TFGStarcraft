@@ -1,10 +1,7 @@
 package q_learning;
 
-import laberinto.PresenterLaberinto;
 import constants.Constants;
 import entrada_salida.Log;
-import entrada_salida.Office_VisitTable;
-
 
 public class QLearner {
 

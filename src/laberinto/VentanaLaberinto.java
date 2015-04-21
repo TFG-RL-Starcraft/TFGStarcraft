@@ -59,8 +59,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     private javax.swing.JButton btEmpezar;
     private javax.swing.JButton btCargarLaberinto;
    // End of variables declaration
-    
-    private int numExp;
 	
     public VentanaLaberinto() {
         initComponents();
@@ -115,14 +113,14 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        
 	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
 	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
-	        
+	        System.out.println(Constants.REWARD_LOSE);
 	        //Repetir este experimento num_iter veces
 	        for(int i = 0; i < Constants.REPETICIONES;i++){
-	        	this.numExp = 0;
+	        	int numExp = 0;
 	        	InicializarQLearner();
 	        	long start = System.currentTimeMillis();
 	        	
-		        while(this.numExp < Constants.NUM_EXP)
+		        while(numExp < Constants.NUM_EXP)
 		        {
 		        	//Ejecuta el experimento hasta llegar a la meta
 		        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
@@ -132,8 +130,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 		        	while(!terminado){
 		        		q.step();		        	
 		        	}
-		        	this.numExp++;
-		        	PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter,this.numExp);
+		        	numExp++;
 		        	
 		        }
 		        long end = System.currentTimeMillis();
@@ -143,13 +140,15 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        
 	        Office_VisitTable.convierteLog("Libro1.xlsx","Log.txt");     
 			//Imprime el mejor camino
-	        //imprimeMejorCamino();  
-	        
-	        //añade a pantalla los valores de la QTable
-	        //imprimeValoresQTabla(); 
-	        
-	        //imprime el excel con la tabla de los estados visitados
-	        //imprimeTablaVisitas();
+	        if(!Constants.PRUEBAS){
+		        imprimeMejorCamino();  
+		        
+		        //añade a pantalla los valores de la QTable
+		        imprimeValoresQTabla(); 
+		        
+		        //imprime el excel con la tabla de los estados visitados
+		        imprimeTablaVisitas();
+	        }
     	}
     }
 
@@ -166,7 +165,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
         tableroVisitas = new int[maxY][maxX];
         this.numIter = 0;
-        PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter,this.numExp);
+        PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter);
         env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
         q = new QLearner(env, qT, new LaberintoActionManager(), NUM_MAX_ITER, this.numIter); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO

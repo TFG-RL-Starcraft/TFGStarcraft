@@ -1,7 +1,5 @@
 package laberinto.actions;
 
-import bwapi.Position;
-
 public class MoveUpRight extends LaberintoAction {
 
 	MoveUpRight(int value) {

@@ -106,54 +106,6 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	@Override
-	public double getReward(State state) {
-		//If the current distance to the final is bigger than the future increase the reward
-		double reward = 0;
-		// Here you must enter all the rewards of learning
-		
-		//1. Politica básica
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = Constants.REWARD_LOSE;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = Constants.REWARD_WON;
-		}*/
-		
-		//2.Politica de recompensa por acercarse con la distancia euclidia
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = Constants.REWARD_LOSE;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = function();
-		} else {
-			reward = getReward(state.getValue());
-		}*/
-		
-		//3. Politica de recompensa por llegar con el menor numero de pasos a la meta
-		/*if(hasLost()) { //if the unit doesn't exist (lost game)+
-			System.out.println(Constants.REWARD_LOSE);
-			reward = Constants.REWARD_LOSE;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = function();
-		}*/
-		
-		//4. Politicas 2 y 3 unidas
-		if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = Constants.REWARD_LOSE;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = function();
-		} else {
-			reward = getReward(state.getValue());
-		}		
-		
-		return reward;
-	}
-	
-	private double function(){
-		double A = (Constants.REWARD_WON - 10.0) / Math.pow(Constants.NUM_PASOS,2);
-		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + Constants.REWARD_WON;		
-		return reward;
-	}
-	
-	@Override
 	public void reset() {
 		this.previousState = null;
 		this.previousAction = null;
@@ -167,44 +119,116 @@ public class LaberintoEnvironment implements Environment{
 			}
 		}
 	}
-
-	private double getReward(int newState){
+	
+	@Override
+	public double getReward(State state) {
+		//If the current distance to the final is bigger than the future increase the reward
+		double reward = 1.0 - Constants.GAMMA;
+		
+		// Here you must enter all the rewards of learning		
+		if(Constants.POLITICA==1){ 			//1. Politica básica
+			reward = policy1();
+		} else if(Constants.POLITICA==2){  	//2. Politica de recompensa por acercarse con la distancia euclidia		
+			reward = policy2(state);
+		} else if(Constants.POLITICA==3){ 	//3. Politica de recompensa por llegar con el menor numero de pasos a la meta		
+			reward = policy3();
+		} else if(Constants.POLITICA==4){ 	//4. Politica de estados repetidos	
+			reward = policy4();
+		}else if(Constants.POLITICA==5){ 	//5. Politicas 2, 3 y 4 unidas		
+			reward = policy5(state);
+		}
+		return reward;
+	}
+		
+	//---------------------- Methods that specify how the different policies work ------------------
+	
+	private double policy1(){
+		double reward = 1.0 - Constants.GAMMA;
+		if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = Constants.REWARD_LOSE;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = Constants.REWARD_WON;
+		}
+		return reward;
+	}
+	
+	private double policy2(State state){
+		double reward = 1.0 - Constants.GAMMA;
+		if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = Constants.REWARD_LOSE;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = Constants.REWARD_WON;
+		} else {
+			reward = getCloser(state.getValue());
+		}
+		return reward;
+	}
+	
+	private double policy3(){
+		double reward = 1.0 - Constants.GAMMA;
+		if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = Constants.REWARD_LOSE;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = functionVictory();
+		}
+		return reward;
+	}
+	
+	private double policy4(){
+		double reward = 1.0 - Constants.GAMMA;
+		if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = Constants.REWARD_LOSE;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = Constants.REWARD_WON;
+		} else {
+			reward = repeatedState();
+		}
+		return reward;
+	}
+	
+	private double policy5(State state){
+		double reward = 1.0 - Constants.GAMMA;
+		if(hasLost()) { //if the unit doesn't exist (lost game)
+			reward = Constants.REWARD_LOSE;
+		} else if(hasWon()) { //if the unit reaches the goal
+			reward = functionVictory();
+		} else {
+			reward = getReward(state.getValue());
+		}
+		return reward;
+	}
+	
+	//---------------------- Private functions for the different policies ------------------	
+	
+	/**
+	 * Policy 2 function
+	 * @param newState => state where the player will go
+	 * @return reward depending if the player is reaching the goal
+	 */
+	private double getCloser(int newState){
 		double reward = 1.0 - Constants.GAMMA;
 		
 		if(previousState != null){
 			double currentDist = euclideanDist(previousState().getValue());
 			double futureDist = euclideanDist(newState);
 			
-			if(currentDist!=futureDist){
-				if(!isRepeated(previousState().getValue())){								
-					if(currentDist>futureDist){
-						reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 3);
-					}else{
-						reward = 0.0;
-					}
-					reward = 0.0;
+			if(currentDist!=futureDist){						
+				if(currentDist>futureDist){
+					reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 4);
 				}else{
-					markAsVisit(previousState().getValue());
-					reward = -3.5;
-				}
+					reward = 1.0 - Constants.GAMMA;
+				}				
 			}
 		}
 		
 		return reward;
 	}
 	
-	private boolean isRepeated(int state){
-		int actualY = (int)(state /  alto);
-		int actualX = state % ancho;
-		return this.visitState[actualX][actualY];
-	}
-	
-	private void markAsVisit(int state){
-		int actualY = (int)(state /  alto);
-		int actualX = state % ancho;
-		this.visitState[actualX][actualY] = true;
-	}
-	
+	/**
+	 * Policy 2
+	 * @param newState => state where the player will go
+	 * @return distance to the goal
+	 */
 	private double euclideanDist(int newState){
 		double dist = Double.MAX_VALUE;
 		int actualY = (int)(newState /  alto);
@@ -222,4 +246,80 @@ public class LaberintoEnvironment implements Environment{
 		return dist;
     }
 	
+	/**
+	 * Policy 3 function
+	 * @return reward in function of the numIter to reach the goal
+	 */
+	private double functionVictory(){
+		double A = (Constants.REWARD_WON - 10.0) / Math.pow(Constants.NUM_PASOS,2);
+		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + Constants.REWARD_WON;		
+		return reward;
+	}	
+
+	/**
+	 * Policy 4 function
+	 * @return reward in function depending on whether the State has previously visited 
+	 */
+	private double repeatedState(){
+		double reward;
+		if(!isRepeated(previousState().getValue())){								
+			reward = 1.0 - Constants.GAMMA;
+		}else{
+			markAsVisit(previousState().getValue());
+			reward = Constants.REWARD_REPEATED;
+		}
+		return reward;
+	}
+	
+	/**
+	 * Policy 4 function
+	 * @param state => state where the player is
+	 * @return if the previous state has been visited yet
+	 */
+	private boolean isRepeated(int state){
+		int actualY = (int)(state /  alto);
+		int actualX = state % ancho;
+		return this.visitState[actualX][actualY];
+	}
+	
+	/**
+	 * Policy 4 function
+	 * @param state => state where the player is
+	 * Mark the "state" as visited
+	 */
+	private void markAsVisit(int state){
+		int actualY = (int)(state /  alto);
+		int actualX = state % ancho;
+		this.visitState[actualX][actualY] = true;
+	}
+	
+	/**
+	 * Policy 5 function
+	 * @param newState => State where the player will move
+	 * @return reward in function of the distance to the goal and if the state has previously visited
+	 */
+	private double getReward(int newState){
+		double reward = 1.0 - Constants.GAMMA;
+		
+		if(previousState != null){
+			double currentDist = euclideanDist(previousState().getValue());
+			double futureDist = euclideanDist(newState);
+			
+			if(currentDist!=futureDist){
+				if(!isRepeated(previousState().getValue())){								
+					if(currentDist>futureDist){
+						reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 4);
+					}else{
+						reward = 1.0 - Constants.GAMMA;
+					}
+					//reward = 0.0;//------------------------------------->4milenio
+				}else{
+					markAsVisit(previousState().getValue());
+					reward = Constants.REWARD_REPEATED;
+				}
+			}
+		}
+		
+		return reward;
+	}	
 }

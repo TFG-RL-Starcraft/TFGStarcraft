@@ -25,7 +25,8 @@ public class Main_Starcraft{
     private Player self;
     //private Player enemy;
     private QLearner q;
-    private QPlayer qp;    
+    @SuppressWarnings("unused")
+	private QPlayer qp;    
     int numberOfFrames = 0;
     
     private static int numExper; //number of experiments
