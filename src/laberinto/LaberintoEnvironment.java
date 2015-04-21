@@ -126,23 +126,23 @@ public class LaberintoEnvironment implements Environment{
 		double reward = 1.0 - Constants.GAMMA;
 		
 		// Here you must enter all the rewards of learning		
-		if(Constants.POLITICA==1){ 			//1. Politica básica
-			reward = policy1();
-		} else if(Constants.POLITICA==2){  	//2. Politica de recompensa por acercarse con la distancia euclidia		
-			reward = policy2(state);
-		} else if(Constants.POLITICA==3){ 	//3. Politica de recompensa por llegar con el menor numero de pasos a la meta		
+		if(Constants.POLITICA==0){ 			//1. Politica básica
+			reward = policy0();
+		} else if(Constants.POLITICA==1){  	//2. Politica de recompensa por acercarse con la distancia euclidia		
+			reward = policy1(state);
+		} else if(Constants.POLITICA==2){ 	//3. Politica de recompensa por llegar con el menor numero de pasos a la meta		
+			reward = policy2();
+		} else if(Constants.POLITICA==3){ 	//4. Politica de estados repetidos	
 			reward = policy3();
-		} else if(Constants.POLITICA==4){ 	//4. Politica de estados repetidos	
-			reward = policy4();
-		}else if(Constants.POLITICA==5){ 	//5. Politicas 2, 3 y 4 unidas		
-			reward = policy5(state);
+		}else if(Constants.POLITICA==4){ 	//5. Politicas 2, 3 y 4 unidas		
+			reward = policy4(state);
 		}
 		return reward;
 	}
 		
 	//---------------------- Methods that specify how the different policies work ------------------
 	
-	private double policy1(){
+	private double policy0(){
 		double reward = 1.0 - Constants.GAMMA;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
@@ -152,7 +152,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	private double policy2(State state){
+	private double policy1(State state){
 		double reward = 1.0 - Constants.GAMMA;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
@@ -164,7 +164,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	private double policy3(){
+	private double policy2(){
 		double reward = 1.0 - Constants.GAMMA;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
@@ -174,7 +174,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	private double policy4(){
+	private double policy3(){
 		double reward = 1.0 - Constants.GAMMA;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
@@ -186,7 +186,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	private double policy5(State state){
+	private double policy4(State state){
 		double reward = 1.0 - Constants.GAMMA;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
@@ -201,7 +201,7 @@ public class LaberintoEnvironment implements Environment{
 	//---------------------- Private functions for the different policies ------------------	
 	
 	/**
-	 * Policy 2 function
+	 * Policy 1 function
 	 * @param newState => state where the player will go
 	 * @return reward depending if the player is reaching the goal
 	 */
@@ -225,7 +225,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	/**
-	 * Policy 2
+	 * Policy 1
 	 * @param newState => state where the player will go
 	 * @return distance to the goal
 	 */
@@ -247,7 +247,7 @@ public class LaberintoEnvironment implements Environment{
     }
 	
 	/**
-	 * Policy 3 function
+	 * Policy 2 function
 	 * @return reward in function of the numIter to reach the goal
 	 */
 	private double functionVictory(){
@@ -257,7 +257,7 @@ public class LaberintoEnvironment implements Environment{
 	}	
 
 	/**
-	 * Policy 4 function
+	 * Policy 3 function
 	 * @return reward in function depending on whether the State has previously visited 
 	 */
 	private double repeatedState(){
@@ -272,7 +272,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	/**
-	 * Policy 4 function
+	 * Policy 3 function
 	 * @param state => state where the player is
 	 * @return if the previous state has been visited yet
 	 */
@@ -283,7 +283,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	/**
-	 * Policy 4 function
+	 * Policy 3 function
 	 * @param state => state where the player is
 	 * Mark the "state" as visited
 	 */
@@ -294,7 +294,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	/**
-	 * Policy 5 function
+	 * Policy 4 function
 	 * @param newState => State where the player will move
 	 * @return reward in function of the distance to the goal and if the state has previously visited
 	 */

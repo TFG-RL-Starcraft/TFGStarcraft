@@ -113,32 +113,37 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        
 	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
 	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
-	        System.out.println(Constants.REWARD_LOSE);
-	        //Repetir este experimento num_iter veces
-	        for(int i = 0; i < Constants.REPETICIONES;i++){
-	        	int numExp = 0;
-	        	InicializarQLearner();
-	        	long start = System.currentTimeMillis();
-	        	
-		        while(numExp < Constants.NUM_EXP)
-		        {
-		        	//Ejecuta el experimento hasta llegar a la meta
-		        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
-		        	//Tenemos que definir de alguna forma un bucle "infinito"
+    		
+    		for(int x = 0; x < Constants.NUM_POLITICAS; x++){
+    			Constants.POLITICA = x;
+  
+		        //Repetir este experimento num_iter veces
+		        for(int i = 0; i < Constants.REPETICIONES;i++){
+		        	int numExp = 0;
+		        	InicializarQLearner();
+		        	long start = System.currentTimeMillis();
 		        	
-		        	terminado = false;
-		        	while(!terminado){
-		        		q.step();		        	
-		        	}
-		        	numExp++;
-		        	
+			        while(numExp < Constants.NUM_EXP)
+			        {
+			        	//Ejecuta el experimento hasta llegar a la meta
+			        	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
+			        	//Tenemos que definir de alguna forma un bucle "infinito"
+			        	
+			        	terminado = false;
+			        	while(!terminado){
+			        		q.step();		        	
+			        	}
+			        	numExp++;
+			        	
+			        }
+			        long end = System.currentTimeMillis();
+			        long res = end - start;
+			        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.\nExp = " + i);
 		        }
-		        long end = System.currentTimeMillis();
-		        long res = end - start;
-		        System.out.println("TIEMPO DE EJECUCIÓN: " + res/1000.0 + "segs.\nExp = " + i);
-	        }
+		        
+		        Office_VisitTable.convierteLog("Libro1.xlsx","Log.txt");    
 	        
-	        Office_VisitTable.convierteLog("Libro1.xlsx","Log.txt");     
+    		}
 			//Imprime el mejor camino
 	        if(!Constants.PRUEBAS){
 		        imprimeMejorCamino();  

@@ -56,58 +56,6 @@ public class Office_VisitTable {
 		}
 	}
 	
-	public static void escribirLog(String path,int pasos,int iter){
-		if(path!=null){
-			//Blank workbook
-	        XSSFWorkbook workbook = null;
-			try {
-				workbook = new XSSFWorkbook(new FileInputStream(path));
-			} catch (FileNotFoundException e1) {
-				workbook = new XSSFWorkbook();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-	        //Create a blank sheet
-	        XSSFSheet sheet = workbook.getSheet("Hoja1");
-	        if(sheet==null)
-	        	sheet = workbook.createSheet("Hoja1");
-	        
-	        Row row = sheet.getRow(iter);
-	        
-	        if(row!=null){
-		        Cell c = row.getCell(0);
-		        if(c!=null){
-			        int g = (int)c.getNumericCellValue();
-			        g = g + pasos;	        
-			        c.setCellValue(g);
-		        }else{
-		        	c = row.createCell(0);
-		        	int g = (int)c.getNumericCellValue();
-			        g = g + pasos;	        
-			        c.setCellValue(g);
-		        }
-	        }else{
-	        	row = sheet.createRow(iter);
-	        	Cell c = row.createCell(0);
-	        	c.setCellValue(pasos);
-	        }
-	        
-	        try
-	        {
-	            //Write the workbook in file system
-	            FileOutputStream out = new FileOutputStream(new File(path));
-	            workbook.write(out);
-	            out.close();
-	        }
-	        catch (Exception e)
-	        {
-	            e.printStackTrace();
-	        }
-		}
-	}
-	
 	public static void convierteLog(String path,String fichero){
 		if(path!=null && fichero!=null){
 			//Blank workbook
@@ -161,9 +109,9 @@ public class Office_VisitTable {
 				Row row = sheet.getRow(i);
 				if(row==null)
 					row = sheet.createRow(i);    
-				Cell c = row.getCell(2);
+				Cell c = row.getCell(Constants.POLITICA);
 				if(c==null)
-					c = row.createCell(2);
+					c = row.createCell(Constants.POLITICA);
 				log[i] = log[i] / Constants.REPETICIONES;
 				c.setCellValue(log[i]);     
 	        }
@@ -174,6 +122,8 @@ public class Office_VisitTable {
 	            FileOutputStream out = new FileOutputStream(new File(path));
 	            workbook.write(out);
 	            out.close();
+	            File oldLog = new File(fichero);
+	            oldLog.delete();
 	        }
 	        catch (Exception e)
 	        {
