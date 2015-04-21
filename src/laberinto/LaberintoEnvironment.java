@@ -142,6 +142,9 @@ public class LaberintoEnvironment implements Environment{
 		
 	//---------------------- Methods that specify how the different policies work ------------------
 	
+	/**
+	 * Basic policy
+	 */
 	private double policy0(){
 		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
@@ -152,6 +155,9 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
+	/**
+	 * Euclidian distance policy
+	 */
 	private double policy1(State state){
 		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
@@ -164,6 +170,9 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
+	/**
+	 * Victory function policy
+	 */
 	private double policy2(){
 		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
@@ -174,6 +183,9 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
+	/**
+	 * Repeated states policy
+	 */
 	private double policy3(){
 		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
@@ -186,6 +198,9 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
+	/**
+	 * Union of all policies
+	 */
 	private double policy4(State state){
 		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)

@@ -69,9 +69,9 @@ public class Office_VisitTable {
 				e1.printStackTrace();
 			}
 			
-			XSSFSheet sheet = workbook.getSheet("Hoja1");
+			XSSFSheet sheet = workbook.getSheet(Constants.TEST_FILES[Constants.CURRENT_TEST_FILE]);
 			if(sheet==null)
-				sheet = workbook.createSheet("Hoja1");
+				sheet = workbook.createSheet(Constants.TEST_FILES[Constants.CURRENT_TEST_FILE]);
 	        
 	        FileReader fr = null;
 	        
@@ -111,10 +111,20 @@ public class Office_VisitTable {
 					row = sheet.createRow(i);    
 				Cell c = row.getCell(Constants.POLITICA);
 				if(c==null)
-					c = row.createCell(Constants.POLITICA);
+					c = row.createCell(Constants.POLITICA);		
+				
 				log[i] = log[i] / Constants.REPETICIONES;
-				c.setCellValue(log[i]);     
+				c.setCellValue(log[i]);				
 	        }
+	        
+	        Row row = sheet.getRow(Constants.NUM_EXP);
+			if(row==null)
+				row = sheet.createRow(Constants.NUM_EXP);    
+			Cell c = row.getCell(Constants.POLITICA);
+			if(c==null)
+				c = row.createCell(Constants.POLITICA);		
+			
+			c.setCellValue(Constants.POLICIES[Constants.POLITICA]);
 	        
 	        try
 	        {
