@@ -123,7 +123,7 @@ public class LaberintoEnvironment implements Environment{
 	@Override
 	public double getReward(State state) {
 		//If the current distance to the final is bigger than the future increase the reward
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		
 		// Here you must enter all the rewards of learning		
 		if(Constants.POLITICA==0){ 			//1. Politica básica
@@ -143,7 +143,7 @@ public class LaberintoEnvironment implements Environment{
 	//---------------------- Methods that specify how the different policies work ------------------
 	
 	private double policy0(){
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
@@ -153,7 +153,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	private double policy1(State state){
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
@@ -165,7 +165,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	private double policy2(){
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
@@ -175,7 +175,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	private double policy3(){
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
@@ -187,7 +187,7 @@ public class LaberintoEnvironment implements Environment{
 	}
 	
 	private double policy4(State state){
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		if(hasLost()) { //if the unit doesn't exist (lost game)
 			reward = Constants.REWARD_LOSE;
 		} else if(hasWon()) { //if the unit reaches the goal
@@ -206,7 +206,7 @@ public class LaberintoEnvironment implements Environment{
 	 * @return reward depending if the player is reaching the goal
 	 */
 	private double getCloser(int newState){
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		
 		if(previousState != null){
 			double currentDist = euclideanDist(previousState().getValue());
@@ -214,9 +214,9 @@ public class LaberintoEnvironment implements Environment{
 			
 			if(currentDist!=futureDist){						
 				if(currentDist>futureDist){
-					reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 4);
+					reward = Constants.REWARD_KEEP_VALUE + (Constants.GAMMA * 4);
 				}else{
-					reward = 1.0 - Constants.GAMMA;
+					reward = Constants.REWARD_KEEP_VALUE;
 				}				
 			}
 		}
@@ -251,8 +251,8 @@ public class LaberintoEnvironment implements Environment{
 	 * @return reward in function of the numIter to reach the goal
 	 */
 	private double functionVictory(){
-		double A = (Constants.REWARD_WON - 10.0) / Math.pow(Constants.NUM_PASOS,2);
-		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 2) + Constants.REWARD_WON;		
+		double A = (Constants.REWARD_WON - 10.0) / Math.pow(Constants.NUM_PASOS,3);
+		double reward = A * Math.pow(PresenterLaberinto.getInstance().getNumIter(), 3) + Constants.REWARD_WON;		
 		return reward;
 	}	
 
@@ -261,10 +261,10 @@ public class LaberintoEnvironment implements Environment{
 	 * @return reward in function depending on whether the State has previously visited 
 	 */
 	private double repeatedState(){
-		double reward = 1.0 - Constants.GAMMA;;
+		double reward = Constants.REWARD_KEEP_VALUE;;
 		if(previousState!=null){
 			if(!isRepeated(previousState().getValue())){								
-				reward = 1.0 - Constants.GAMMA;
+				reward = Constants.REWARD_KEEP_VALUE + (Constants.GAMMA * 4);
 			}else{
 				markAsVisit(previousState().getValue());
 				reward = Constants.REWARD_REPEATED;
@@ -301,7 +301,7 @@ public class LaberintoEnvironment implements Environment{
 	 * @return reward in function of the distance to the goal and if the state has previously visited
 	 */
 	private double getReward(int newState){
-		double reward = 1.0 - Constants.GAMMA;
+		double reward = Constants.REWARD_KEEP_VALUE;
 		
 		if(previousState != null){
 			double currentDist = euclideanDist(previousState().getValue());
@@ -310,9 +310,9 @@ public class LaberintoEnvironment implements Environment{
 			if(currentDist!=futureDist){
 				if(!isRepeated(previousState().getValue())){								
 					if(currentDist>futureDist){
-						reward = Constants.QTABLE_INIT_VALUE - Constants.GAMMA + (Constants.GAMMA * 4);
+						reward = Constants.REWARD_KEEP_VALUE + (Constants.GAMMA * 4);
 					}else{
-						reward = 1.0 - Constants.GAMMA;
+						reward = Constants.REWARD_KEEP_VALUE;
 					}
 					//reward = 0.0;//------------------------------------->4milenio
 				}else{

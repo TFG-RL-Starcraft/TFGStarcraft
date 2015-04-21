@@ -113,7 +113,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        
 	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
 	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
-    		
+    		System.out.println(Constants.REWARD_REPEATED);
     		for(int x = 0; x < Constants.NUM_POLITICAS; x++){
     			Log.deleteLog(Constants.NAME_FILE_LOG);
     			Constants.POLITICA = x;
