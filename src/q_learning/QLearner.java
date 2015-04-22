@@ -38,7 +38,7 @@ public class QLearner {
 
 			double reward = environment.getReward(newState);
 				
-			if(/*!environment.isFinalState() &&*/ state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
+			if(state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
 						//and the newState can be null if the game ends; in these cases, we can't update the Q-Table			
 				
 				// Update Q-Table
@@ -55,7 +55,7 @@ public class QLearner {
 									//TODO este if/else es sólo para debug
 									if( reward == Constants.REWARD_LOSE && numIter != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
-										Log.printLog(Constants.NAME_FILE_LOG, "dead");
+										Log.printLog(Constants.NAME_FILE_LOG, Constants.DEAD_STRING);
 									}
 									else
 									{

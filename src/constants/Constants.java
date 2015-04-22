@@ -10,7 +10,7 @@ public class Constants {
 	public static double REWARD_KEEP_VALUE = QTABLE_INIT_VALUE - (GAMMA * QTABLE_INIT_VALUE);
 	public static int NUM_PASOS = 2000;
 	public static int NUM_EXP = 500;
-	public static int REPETICIONES = 1;
+	public static int REPETICIONES = 50;
 	public static int POLITICA;
 	public static String[] POLICIES = { 
 		"Politica 0",
@@ -22,6 +22,7 @@ public class Constants {
 	public static int NUM_POLITICAS = POLICIES.length;
 	public static boolean PRUEBAS = true;
 	public static String NAME_FILE_LOG = "log.txt";
+	public static String DEAD_STRING = "dead";
 	public static String[] TEST_FILES = {"mapa_facil.txt","mapa_normal.txt","mapa_dificil.txt"};
 	public static int CURRENT_TEST_FILE;
 }

@@ -109,7 +109,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     
     private void btEmpezarActionPerformed(java.awt.event.ActionEvent evt) {
-    	if(cargado){
+    	//if(cargado){
 	        
 	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
 	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
@@ -149,6 +149,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 		        
 	    		}
     		}
+    		
+    		System.out.println("TERMINADO");
+    		
 			//Imprime el mejor camino
 	        if(!Constants.PRUEBAS){
 		        imprimeMejorCamino();  
@@ -159,7 +162,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 		        //imprime el excel con la tabla de los estados visitados
 		        imprimeTablaVisitas();
 	        }
-    	}
+    	//}
     }
 
 	private void btCargarLaberintoActionPerformed(ActionEvent evt) {
