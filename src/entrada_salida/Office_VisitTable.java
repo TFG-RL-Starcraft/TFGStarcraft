@@ -72,8 +72,14 @@ public class Office_VisitTable {
 
 			FileReader fr = null;
 
-			int log[] = new int[Constants.NUM_EXP];
+			int log[][] = new int[Constants.NUM_EXP][2];
 
+			for(int i = 0; i < Constants.NUM_EXP; i++){
+				for(int j = 0; j < 2; j++){
+					log[i][j] = 0;
+				}
+			}
+			
 			try {
 				fr = new FileReader(fichero);
 			} catch (FileNotFoundException e) {
@@ -91,12 +97,9 @@ public class Office_VisitTable {
 						e.printStackTrace();
 					}
 
-					if (line != null) {
-						if (line.equalsIgnoreCase(Constants.DEAD_STRING)) {
-							log[i] = 0;
-						} else {
-							log[i] = log[i] + Integer.parseInt(line);
-						}
+					if (line != null && !line.equalsIgnoreCase(Constants.DEAD_STRING)) {
+						log[i][0] = log[i][0] + Integer.parseInt(line);
+						log[i][1]++;						
 					}
 				}
 			}
@@ -108,9 +111,11 @@ public class Office_VisitTable {
 				Cell c = row.getCell(Constants.POLITICA);
 				if (c == null)
 					c = row.createCell(Constants.POLITICA);
-
-				log[i] = log[i] / Constants.REPETICIONES;
-				c.setCellValue(log[i]);
+				
+				if(log[i][0]!=0){
+					log[i][0] = log[i][0] / log[i][1];
+					c.setCellValue(log[i][0]);
+				}
 			}
 
 			Row row = sheet.getRow(Constants.NUM_EXP);

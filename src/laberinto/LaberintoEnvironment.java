@@ -69,7 +69,7 @@ public class LaberintoEnvironment implements Environment {
 
 	private void updateNumberOfVisitsTable() {
 		State s = state();
-		int y = (int) (s.getValue() / alto);
+		int y = s.getValue() / ancho;
 		int x = s.getValue() % ancho;
 		tableroVisitas[x][y]++;
 	}
@@ -343,8 +343,7 @@ public class LaberintoEnvironment implements Environment {
 			if (currentDist != futureDist) {
 				if (!isRepeated(previousState().getValue())) {
 					if (currentDist > futureDist) {
-						reward = Constants.REWARD_KEEP_VALUE
-								+ (Constants.GAMMA * 4);
+						reward = Constants.REWARD_KEEP_VALUE + (Constants.GAMMA * 4);
 					} else {
 						reward = Constants.REWARD_KEEP_VALUE;
 					}
