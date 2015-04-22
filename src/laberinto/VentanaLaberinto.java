@@ -34,8 +34,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int META = 3;
     public static final int ENEMIGO = 4;
     
-    public static final int NUM_MAX_ITER = Constants.NUM_PASOS;
-    
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
     private Casilla salida;
     private Casilla meta;  
@@ -181,7 +179,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter);
         env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tableroVisitas, listaEnemigos);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
-        q = new QLearner(env, qT, new LaberintoActionManager(), NUM_MAX_ITER, this.numIter); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
+        q = new QLearner(env, qT, new LaberintoActionManager(), Constants.NUM_PASOS, this.numIter); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
 	}
 

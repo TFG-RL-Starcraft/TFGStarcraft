@@ -39,6 +39,8 @@ public class LaberintoEnvironment implements Environment {
 				this.visitState[i][j] = false;
 			}
 		}
+		
+		Constants.NUM_PASOS = ancho * alto;
 	}
 
 	@Override

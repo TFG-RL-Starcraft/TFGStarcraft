@@ -8,7 +8,7 @@ public class Constants {
 	public static double REWARD_LOSE = ( - QTABLE_INIT_VALUE - (ALPHA * GAMMA * QTABLE_INIT_VALUE) + (ALPHA * QTABLE_INIT_VALUE)) / ALPHA ;
 	public static double REWARD_REPEATED = REWARD_LOSE + (Math.abs(Math.abs(REWARD_LOSE) - Math.abs(QTABLE_INIT_VALUE - (GAMMA * QTABLE_INIT_VALUE))) * 0.307);
 	public static double REWARD_KEEP_VALUE = QTABLE_INIT_VALUE - (GAMMA * QTABLE_INIT_VALUE);
-	public static int NUM_PASOS = 2000;
+	public static int NUM_PASOS;
 	public static int NUM_EXP = 500;
 	public static int REPETICIONES = 50;
 	public static int POLITICA;
