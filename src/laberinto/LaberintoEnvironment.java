@@ -262,10 +262,10 @@ public class LaberintoEnvironment implements Environment {
 	 */
 	private double euclideanDist(int newState) {
 		double dist = Double.MAX_VALUE;
-		int actualY = (int) (newState / alto);
+		int actualY = newState / ancho;
 		int actualX = newState % ancho;
 
-		int futureY = (int) (lastState.getValue() / alto);
+		int futureY = lastState.getValue() / ancho;
 		int futureX = lastState.getValue() % ancho;
 		int x1 = Math.abs(actualY - futureY);
 		int x2 = Math.abs(actualX - futureX);
@@ -282,11 +282,8 @@ public class LaberintoEnvironment implements Environment {
 	 * @return reward in function of the numIter to reach the goal
 	 */
 	private double functionVictory() {
-		double A = (Constants.REWARD_WON - 10.0)
-				/ Math.pow(Constants.NUM_PASOS, 3);
-		double reward = A
-				* Math.pow(PresenterLaberinto.getInstance().getNumIter(), 3)
-				+ Constants.REWARD_WON;
+		double A = (Constants.REWARD_WON - 10.0)/ Math.pow(Constants.NUM_PASOS, 3);
+		double reward = A* Math.pow(PresenterLaberinto.getInstance().getNumIter(), 3) + Constants.REWARD_WON;
 		return reward;
 	}
 
@@ -314,7 +311,7 @@ public class LaberintoEnvironment implements Environment {
 	 * @return if the previous state has been visited yet
 	 */
 	private boolean isRepeated(int state) {
-		int actualY = (int) (state / alto);
+		int actualY = state / ancho;
 		int actualX = state % ancho;
 		return this.visitState[actualX][actualY];
 	}
@@ -324,7 +321,7 @@ public class LaberintoEnvironment implements Environment {
 	 * @param state => state where the player is Mark the "state" as visited
 	 */
 	private void markAsVisit(int state) {
-		int actualY = (int) (state / alto);
+		int actualY = state / ancho;
 		int actualX = state % ancho;
 		this.visitState[actualX][actualY] = true;
 	}

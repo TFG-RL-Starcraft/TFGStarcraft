@@ -113,8 +113,8 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	        
 	        //VOY A MODIFICAR ESTA PARTE PARA QUE HAGA MUCHAS PRUEBAS EN UNA SÓLA EJECUCIÓN
 	        //DE FORMA AUTOMÁTICA, Y VAYA GUARDANDO LOS RESULTADOS PARA LUEGO HACER LAS GRÁFICAS
-    		for(int y = 0; y < Constants.TEST_FILES.length; y++){
-    			Constants.CURRENT_TEST_FILE = y;
+    		//for(int y = 0; y < Constants.TEST_FILES.length; y++){
+    			Constants.CURRENT_TEST_FILE = 2;
     			InicializarTablero();
     			System.out.println("Mapa de pruebas es " + Constants.TEST_FILES[Constants.CURRENT_TEST_FILE]);
 	    		for(int x = 0; x < Constants.NUM_POLITICAS; x++){
@@ -148,7 +148,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 			        Office_VisitTable.convierteLog("Libro1.xlsx","Log.txt");    
 		        
 	    		}
-    		}
+    		//}
     		
     		System.out.println("TERMINADO");
     		
