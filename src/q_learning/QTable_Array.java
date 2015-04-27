@@ -1,6 +1,5 @@
 package q_learning;
 
-
 public class QTable_Array implements QTable {
 
 	private double[][] table;

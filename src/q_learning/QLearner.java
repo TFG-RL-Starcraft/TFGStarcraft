@@ -1,5 +1,6 @@
 package q_learning;
 
+import constants.Constants;
 import entrada_salida.Log;
 
 public class QLearner {
@@ -45,7 +46,7 @@ public class QLearner {
 				// Update Q-Table
 				//Q(s,a) = Q(s,a) + alpha( r + gamma * max a'(Q(s', a')) - Q(s,a) )
 				double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));	
-				newValue = Math.max(0, newValue); //this max is to prevent negative values
+				newValue = Math.max(0, newValue); //this max is to prevent negative values in the QTable
 				qTable.set(state, action, newValue);		
 			}
 
@@ -54,13 +55,13 @@ public class QLearner {
 			if(environment.isFinalState() || numIter[0] >= maxNumIter ) {		
 				
 									//TODO este if/else es sólo para debug
-									if( reward == -1 && numIter[0] != 0) //reward = -1 -> ha muerto, numIter!=0 para que solo se imprima una vez
+									if( reward == Constants.REWARD_LOST && numIter[0] != 0) //-> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
-										Log.printLog("log.txt", "dead");
+										Log.printLog(Constants.NAME_FILE_LOG, Constants.DEAD_STRING);
 									}
 									else
 									{
-										Log.printLog("log.txt", Integer.toString(numIter[0]));
+										Log.printLog(Constants.NAME_FILE_LOG, Integer.toString(numIter[0]));
 									}										
 
 				environment.reset();

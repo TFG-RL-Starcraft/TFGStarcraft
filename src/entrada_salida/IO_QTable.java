@@ -58,6 +58,7 @@ public class IO_QTable {
 			try {
 	         // Open the file in a BufferedReader for easier reading
 			 fr = new FileReader(path);
+			 @SuppressWarnings("resource")
 			 BufferedReader br = new BufferedReader(fr);	         
 	         
 	         String line = br.readLine();
