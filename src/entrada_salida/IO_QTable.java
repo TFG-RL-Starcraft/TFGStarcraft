@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 
 import q_learning.QTable;
 import q_learning.QTable_Array;
-import starcraft.Presenter;
+import starcraft.StarcraftPresenter;
 import starcraft.StarcraftState;
 
 public class IO_QTable {
@@ -65,14 +65,14 @@ public class IO_QTable {
 	         int num_states = Integer.parseInt(line);
 	         line = br.readLine();
 	         int num_actions = Integer.parseInt(line);
-	         qTable = new QTable_Array(num_states,num_actions, Presenter.getInstance().getStarcraftActionManager());
+	         qTable = new QTable_Array(num_states,num_actions, StarcraftPresenter.getInstance().getStarcraftActionManager());
 	         
 	         int i=0;
 	         while((line=br.readLine()) != null){
 	        	double quantity[] = parse(line);
 	        	 
             	for(int j = 0; j < quantity.length; j++){
-            		qTable.set(new StarcraftState(i), Presenter.getInstance().getStarcraftActionManager().get(j), quantity[j]);
+            		qTable.set(new StarcraftState(i), StarcraftPresenter.getInstance().getStarcraftActionManager().get(j), quantity[j]);
             	}
 	            i++;
 	         }

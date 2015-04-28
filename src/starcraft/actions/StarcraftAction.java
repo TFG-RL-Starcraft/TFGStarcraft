@@ -4,7 +4,7 @@ import bwapi.Game;
 import bwapi.Position;
 import bwapi.Unit;
 import q_learning.Action;
-import starcraft.Presenter;
+import starcraft.StarcraftPresenter;
 
 public abstract class StarcraftAction extends Action{
 
@@ -19,9 +19,9 @@ public abstract class StarcraftAction extends Action{
 	
     // Implement the configureContext() method here because it's the same for all the Actions
 	public void configureContext() {
-		this.game = Presenter.getInstance().getGame();
-		this.unit = Presenter.getInstance().getUnit();
-		this.box_size = Presenter.getInstance().getBoxSize();
+		this.game = StarcraftPresenter.getInstance().getGame();
+		this.unit = StarcraftPresenter.getInstance().getUnit();
+		this.box_size = StarcraftPresenter.getInstance().getBoxSize();
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public abstract class StarcraftAction extends Action{
 	 * @return Starcraft position or null if there is not valid
 	 */
 	protected Position isValid(int x, int y) {
-		int BOX_LENGTH = Presenter.getInstance().getBoxSize();
+		int BOX_LENGTH = StarcraftPresenter.getInstance().getBoxSize();
 		Position p = new Position(x*BOX_LENGTH+(BOX_LENGTH/2), y*BOX_LENGTH+(BOX_LENGTH/2));
 		if((0 <= x) && (x < game.mapWidth()*BOX_LENGTH) && (0 <= y) && (y < game.mapHeight()*BOX_LENGTH)
 				&& game.hasPath(unit.getPosition(), p)){

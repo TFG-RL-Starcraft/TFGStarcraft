@@ -15,18 +15,18 @@ import bwapi.Unit;
  * What you do is initialize it with setInstance, and then collect with getInstance ().
  *
  */
-public class Presenter {
+public class StarcraftPresenter {
 	
-	private static Presenter instance = null;
+	private static StarcraftPresenter instance = null;
 	
 	private Game game;
     private Unit unit;
     private int box_size;
     private StarcraftActionManager starcraftActionManager;
-    private int numIter;
+    private int numIter[];
     
     
-	public Presenter(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager,int numIter) {
+	public StarcraftPresenter(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager, int[] numIter) {
 		this.game = game;
 		this.unit = unit;
 		this.box_size = box_size;
@@ -37,15 +37,15 @@ public class Presenter {
 	/**
 	 * Initialization method and instantiation of the Presenter class.
 	 */
-	public static void setInstance(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager,int numIter) {
-			instance = new Presenter(game, unit, box_size, starcraftActionManager,numIter);
+	public static void setInstance(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager,int[] numIter) {
+			instance = new StarcraftPresenter(game, unit, box_size, starcraftActionManager, numIter);
 	}	
 	
 	/**
 	 * Returns a single instance of the class Presenter
 	 * @return Class instance
 	 */
-	public static Presenter getInstance()
+	public static StarcraftPresenter getInstance()
 	{
 		return instance;
 	}
@@ -69,6 +69,6 @@ public class Presenter {
 	}
 	
 	public int getNumIter(){
-		return numIter;
+		return numIter[0];
 	}
 }

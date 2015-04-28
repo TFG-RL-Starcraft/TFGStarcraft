@@ -17,8 +17,8 @@ import bwta.*;
 public class Main_Starcraft{
 
 	private static long time_start, time_end;
-	private int max_iter = Constants.NUM_ITERACIONES_MAX_QLEARNER;
-	private int numIter;
+	
+	private int numIter[] = new int[1];
 	
     private Mirror mirror = new Mirror();
 
@@ -44,18 +44,6 @@ public class Main_Starcraft{
                 game = mirror.getGame();
                 self = game.self();
                 
-                //Player p1 = game.enemies().get(0); //esto hace que no funcione si no encuentra ningún enemigo ¡¡¡TENER CUIDADO!!!
-
-              /*  for(Player p : game.enemies()){
-                	if(p.getUnits().size()>0)
-                	{
-                		enemy = p;
-                	}
-                }
-                
-                System.out.println("numero enemigos " + enemy.getUnits().get(0).getType().toString());*/
-//                Log.printLog("log.txt", Integer.toString(numIter));
-                
                 //Use BWTA to analyze map
                 //This may take a few minutes if the map is processed first time!
                 System.out.println("Analyzing map...");
@@ -64,30 +52,8 @@ public class Main_Starcraft{
                 
                 marine = getMarine();
                 System.out.println("Map data ready");
-                numIter = 0; 
-              //Inicializa Presentador ----------------------------------------------------------------------------
-				Presenter.setInstance(game, marine, 32, new StarcraftActionManager(),numIter);
                 
-                ArrayList<State> finalStateList = new ArrayList<State>();
-                ArrayList<Position> positions = getBalizas();
-                
-                for(Position p: positions) {
-	                State finalState = new StarcraftState((int)p.getX()/32, (int)p.getY()/32, game.mapWidth(), game.mapHeight());
-	                finalStateList.add(finalState);
-                }
-                
-                int[][] visitTable = new int[game.mapWidth()][game.mapHeight()];
-				Environment e = new StarcraftEnvironment(game, marine, finalStateList, visitTable, Constants.REWARD_WON, Constants.REWARD_LOST, max_iter, Policies.BASIC);
-				
-				QTable qT = IO_QTable.leerTabla("qtabla.txt");
-				if(qT == null) {
-					qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
-				}
-				int[] numIter = {0};
-				q = new QLearner(e, qT, new StarcraftActionManager(), max_iter, numIter, 0.9, 0.1);
-				qp = new QPlayer(e, qT, new StarcraftActionManager());
-				
-				
+                InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.NUM_ITERACIONES_MAX_QLEARNER, Constants.REWARD_WON, Constants.REWARD_LOST, Policies.BASIC);								
 				
 			 	game.setLocalSpeed(0);
 				//game.setGUI(false);
@@ -113,14 +79,16 @@ public class Main_Starcraft{
         			
                 	numberOfFrames = 0;
                 }
-
+                
+                //game.leaveGame();
+                
             }
             
 	        @Override
 	        public void onEnd(boolean isWinner) {
 	    		System.out.println("END");
 	    		//Log.printLog("log.txt", Integer.toString(numIter));
-	    		IO_QTable.escribirTabla(q.qTable(), "qtabla.txt");
+	    		IO_QTable.escribirTabla(q.qTable(), Constants.TEST_QTABLE_FILE);
 	    		time_end = System.currentTimeMillis();	    		
 	            System.out.println("The Experiment " + numExper + " has taken "+ ( time_end - time_start ) +" milliseconds");  
 	            numExper++;
@@ -135,6 +103,33 @@ public class Main_Starcraft{
 
         mirror.startGame();
     }
+    
+    private void InicializarQLearner(double alpha, double gamma, int num_iter_max_qlearner, double won_reward, double lost_reward, Policies policy_used) {
+    	
+    	numIter[0] = 0; 
+
+    	StarcraftPresenter.setInstance(game, marine, 32, new StarcraftActionManager(), numIter);
+        
+        ArrayList<State> finalStateList = new ArrayList<State>();
+        ArrayList<Position> positions = getBalizas();
+        
+        for(Position p: positions) {
+            State finalState = new StarcraftState((int)p.getX()/StarcraftPresenter.getInstance().getBoxSize(), (int)p.getY()/StarcraftPresenter.getInstance().getBoxSize(), game.mapWidth(), game.mapHeight());
+            finalStateList.add(finalState);
+        }
+        
+        int[][] visitTable = new int[game.mapWidth()][game.mapHeight()];
+		Environment e = new StarcraftEnvironment(game, marine, finalStateList, visitTable, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
+		
+		QTable qT = IO_QTable.leerTabla(Constants.TEST_QTABLE_FILE);
+		if(qT == null) {
+			qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
+		}
+
+		q = new QLearner(e, qT, new StarcraftActionManager(), num_iter_max_qlearner, numIter, alpha, gamma);
+		qp = new QPlayer(e, qT, new StarcraftActionManager());
+
+	}
     
     private Unit getMarine() {
 		for (Unit myUnit : self.getUnits()) {

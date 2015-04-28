@@ -3,7 +3,7 @@
   realizations="true" associations="true" dependencies="true" nesting-relationships="true">  
   <class id="1" language="java" name="starcraft.Main_Starcraft" project="ExampleBot" 
     file="/ExampleBot/src/starcraft/Main_Starcraft.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="610" y="316"/>    
+    <position height="-1" width="-1" x="708" y="189"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,16 +21,16 @@
   </class>  
   <class id="3" language="java" name="starcraft.StarcraftEnvironment" project="ExampleBot" 
     file="/ExampleBot/src/starcraft/StarcraftEnvironment.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="300" y="550"/>    
+    <position height="-1" width="-1" x="308" y="749"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="starcraft.Presenter" project="ExampleBot" 
-    file="/ExampleBot/src/starcraft/Presenter.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="295" y="196"/>    
+  <class id="4" language="java" name="starcraft.StarcraftPresenter" project="ExampleBot" 
+    file="/ExampleBot/src/starcraft/StarcraftPresenter.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="315" y="182"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -38,34 +38,34 @@
     </display>  
   </class>  
   <dependency id="5">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="4"/>  
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
   </dependency>  
   <association id="6">    
-    <bendpoint x="428" y="54"/>    
-    <bendpoint x="455" y="54"/>    
-    <bendpoint x="456" y="73"/>    
+    <bendpoint x="448" y="40"/>    
+    <bendpoint x="475" y="40"/>    
+    <bendpoint x="476" y="59"/>    
     <end type="SOURCE" refId="4" navigable="false">      
       <attribute id="7" name="instance">        
-        <position height="18" width="49" x="434" y="35"/>      
+        <position height="18" width="49" x="454" y="21"/>      
       </attribute>      
       <multiplicity id="8" minimum="0" maximum="1">        
-        <position height="16" width="23" x="459" y="52"/>      
+        <position height="16" width="23" x="479" y="38"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <dependency id="9">    
-    <end type="SOURCE" refId="3"/>    
+    <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="4"/>  
   </dependency>  
   <dependency id="10">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="3"/>  
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
   <dependency id="11">    
-    <end type="SOURCE" refId="1"/>    
+    <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="4"/>  
   </dependency>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

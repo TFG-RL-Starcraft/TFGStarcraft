@@ -78,7 +78,7 @@ public class StarcraftEnvironment implements Environment{
 
 	@Override
 	public int numActions() {
-		return Presenter.getInstance().getStarcraftActionManager().getNumActions();
+		return StarcraftPresenter.getInstance().getStarcraftActionManager().getNumActions();
 	}
 
 	@Override
@@ -98,8 +98,8 @@ public class StarcraftEnvironment implements Environment{
 	@Override
 	public State state() {
 		if(unit.exists()){
-			return new StarcraftState((int)unit.getPosition().getX()/Presenter.getInstance().getBoxSize(), 
-					(int)unit.getPosition().getY()/Presenter.getInstance().getBoxSize(), game.mapWidth(), game.mapHeight());
+			return new StarcraftState((int)unit.getPosition().getX()/StarcraftPresenter.getInstance().getBoxSize(), 
+					(int)unit.getPosition().getY()/StarcraftPresenter.getInstance().getBoxSize(), game.mapWidth(), game.mapHeight());
 		}else{
 			return null;
 		}
