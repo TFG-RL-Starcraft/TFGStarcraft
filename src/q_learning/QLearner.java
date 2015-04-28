@@ -57,11 +57,11 @@ public class QLearner {
 									//TODO este if/else es sólo para debug
 									if( reward == Constants.REWARD_LOST && numIter[0] != 0) //-> ha muerto, numIter!=0 para que solo se imprima una vez
 									{
-										Log.printLog(Constants.NAME_FILE_LOG, Constants.DEAD_STRING);
+										Log.printLog(Constants.TEST_LOG_FILE, Constants.TEST_DEAD_STRING);
 									}
 									else
 									{
-										Log.printLog(Constants.NAME_FILE_LOG, Integer.toString(numIter[0]));
+										Log.printLog(Constants.TEST_LOG_FILE, Integer.toString(numIter[0]));
 									}										
 
 				environment.reset();
