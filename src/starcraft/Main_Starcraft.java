@@ -1,6 +1,8 @@
 package starcraft;
 import java.util.ArrayList;
 
+import starcraft.StarcraftEnvironment.Policies;
+import constants.Constants;
 import entrada_salida.IO_QTable;
 import q_learning.Environment;
 import q_learning.QLearner;
@@ -15,7 +17,7 @@ import bwta.*;
 public class Main_Starcraft{
 
 	private static long time_start, time_end;
-	private int MAX_ITER = 100;
+	private int max_iter = Constants.NUM_ITERACIONES_MAX_QLEARNER;
 	private int numIter;
 	
     private Mirror mirror = new Mirror();
@@ -74,15 +76,15 @@ public class Main_Starcraft{
 	                finalStateList.add(finalState);
                 }
                 
-				//State ls = new StarcraftState(0, 0, game.mapWidth(), game.mapHeight());
-				Environment e = new StarcraftEnvironment(game, marine, finalStateList);
+                int[][] visitTable = new int[game.mapWidth()][game.mapHeight()];
+				Environment e = new StarcraftEnvironment(game, marine, finalStateList, visitTable, Constants.REWARD_WON, Constants.REWARD_LOST, max_iter, Policies.BASIC);
 				
 				QTable qT = IO_QTable.leerTabla("qtabla.txt");
 				if(qT == null) {
 					qT = new QTable_Array(e.numStates(), e.numActions(), new StarcraftActionManager());
 				}
 				int[] numIter = {0};
-				q = new QLearner(e, qT, new StarcraftActionManager(), MAX_ITER, numIter, 0.9, 0.1);
+				q = new QLearner(e, qT, new StarcraftActionManager(), max_iter, numIter, 0.9, 0.1);
 				qp = new QPlayer(e, qT, new StarcraftActionManager());
 				
 				

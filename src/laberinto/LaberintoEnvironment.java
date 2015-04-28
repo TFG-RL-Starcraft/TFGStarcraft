@@ -127,6 +127,15 @@ public class LaberintoEnvironment implements Environment{
 	}
 
 	@Override
+	public void reset() {
+		this.previousState = null;
+		this.previousAction = null;
+		PresenterLaberinto.getInstance().getGame().setEstadoActual(init_state);
+		this.lastState = this.init_lastState;
+		PresenterLaberinto.getInstance().getGame().setTerminado(true);
+	}
+	
+	@Override
 	public double getReward(State state) {
 		
 		double reward = this.default_reward; //default = 0
@@ -159,8 +168,9 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}	
 	
+	// ---------------------- Methods that specify how the different policies work ------------------
 
-	/*
+	/**
 	 * 1. Basic Policy
 	 * gets a reward when you win and when you lose
 	 */
@@ -174,7 +184,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	/*
+	/**
 	 * 2. Euclidean Distance Policy
 	 * gets a reward proportional to how close it is to the goal, only if it approaches
 	 */
@@ -190,7 +200,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	/*
+	/**
 	 * 3. Less Steps Policy
 	 * gets a reward proportional to the number of steps used for reaching the goal
 	 */
@@ -204,7 +214,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	/*
+	/**
 	 * 4. Euclidean Distance & Less Steps Policy
 	 * it's is the union of policy 2 and 3
 	 */
@@ -220,7 +230,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}
 	
-	/*
+	/**
 	 * 5. Not Repeated Steps Policy
 	 * gets a reward depending on whether the State has previously visited,
 	 * trying to avoid repeated states (loops)
@@ -241,18 +251,7 @@ public class LaberintoEnvironment implements Environment{
 		return reward;
 	}	
 
-	@Override
-	public void reset() {
-		this.previousState = null;
-		this.previousAction = null;
-		PresenterLaberinto.getInstance().getGame().setEstadoActual(init_state);
-		this.lastState = this.init_lastState;
-		PresenterLaberinto.getInstance().getGame().setTerminado(true);
-	}
-
-	//////////////////////////////////////////////
-	//AUXILIARY FUNCTIONS FOR THE VARIOUS POLICIES 
-	//////////////////////////////////////////////
+	// ---------------------- Auxiliary functions for the different policies ------------------
 	
 	private double stepDependantReward() {
 		double A = (this.won_reward - 10.0) / Math.pow(this.max_iter, 2);		
