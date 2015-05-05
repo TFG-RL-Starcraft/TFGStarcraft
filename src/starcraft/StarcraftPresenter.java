@@ -24,21 +24,23 @@ public class StarcraftPresenter {
     private int box_size;
     private StarcraftActionManager starcraftActionManager;
     private int numIter[];
+    private boolean just_finished[];
     
-    
-	public StarcraftPresenter(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager, int[] numIter) {
+	public StarcraftPresenter(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager, int[] numIter, boolean[] just_finished) {
 		this.game = game;
 		this.unit = unit;
 		this.box_size = box_size;
 		this.starcraftActionManager = starcraftActionManager;
 		this.numIter = numIter;
+		this.just_finished = just_finished;
 	}
 
 	/**
 	 * Initialization method and instantiation of the Presenter class.
+	 * @param is_just_finished 
 	 */
-	public static void setInstance(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager,int[] numIter) {
-			instance = new StarcraftPresenter(game, unit, box_size, starcraftActionManager, numIter);
+	public static void setInstance(Game game, Unit unit, int box_size, StarcraftActionManager starcraftActionManager,int[] numIter, boolean[] is_just_finished) {
+			instance = new StarcraftPresenter(game, unit, box_size, starcraftActionManager, numIter, is_just_finished);
 	}	
 	
 	/**
@@ -69,6 +71,14 @@ public class StarcraftPresenter {
 	}
 	
 	public int getNumIter(){
-		return numIter[0];
+		return this.numIter[0];
+	}
+	
+	public boolean isJustFinished(){
+		return this.just_finished[0];
+	}
+
+	public void setJustFinished(boolean finished) {
+		this.just_finished[0] = finished;
 	}
 }

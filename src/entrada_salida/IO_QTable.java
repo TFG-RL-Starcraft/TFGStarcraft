@@ -79,7 +79,7 @@ public class IO_QTable {
 	         
 	         
 	      } catch(Exception e) {
-	         e.printStackTrace();
+	         //e.printStackTrace();
 	      } finally {
 	         // Make sure that closes the file
 	         try {                    
@@ -87,7 +87,7 @@ public class IO_QTable {
 	               fr.close();     
 	            }                  
 	         } catch(Exception e2) { 
-	            e2.printStackTrace();
+	            //e2.printStackTrace();
 	         }
 	      }
 		}

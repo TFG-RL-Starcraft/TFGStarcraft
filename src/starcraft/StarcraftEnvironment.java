@@ -145,7 +145,7 @@ public class StarcraftEnvironment implements Environment{
 		this.previousState = null;
 		this.previousAction = null;
 		game.pauseGame();
-		game.restartGame();
+		StarcraftPresenter.getInstance().setJustFinished(true);
 	}	
 	
 	@Override

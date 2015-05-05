@@ -35,7 +35,6 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     public static final int META = 3;
     public static final int ENEMIGO = 4;
     
-    private int num_iter_max = Constants.NUM_ITERACIONES_MAX_QLEARNER; //número máximo de iteraciones (pasos) de cada intento
     private int num_intentos = Constants.NUM_INTENTOS_APRENDIZAJE; //número de veces que se realizará el experimento con la misma QTabla. 
     							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos. 
     private int num_exper = Constants.TEST_NUM_EXPERIMENTOS; //número de experimentos completos, cada experimento consta de varios INTENTOS
@@ -124,7 +123,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	    	
 	    	for(int map_indx = 0; map_indx < Constants.TEST_MAP_FILES.length; map_indx++) //por cada mapa
 	    	{
-	    		String map = Constants.TEST_MAP_FILES[map_indx];
+	    		String map = Constants.TEST_MAP_FILES[map_indx] + ".txt";
 	    		InicializarTablero(map);
 	    		  		
 	    		for(int pol_indx=0; pol_indx<policies.length; pol_indx++) //por cada una de las políticas
@@ -218,7 +217,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	    	InicializarTablero(Constants.MAP_FILE);
 	    	
 	    	// 2.Inicializa y "resetea" las variables y tablas
-    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, num_iter_max, Constants.REWARD_WON, Constants.REWARD_LOST, Constants.USED_POLICY);
+    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.NUM_ITERACIONES_MAX_QLEARNER, Constants.REWARD_WON, Constants.REWARD_LOST, Constants.USED_POLICY);
     		
     		// 3.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
 		    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
