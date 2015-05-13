@@ -12,11 +12,11 @@ public class StarcraftEnvironment implements Environment{
 	
 	public enum Policies //Enum with the possible reward policies
 	{
-	    BASIC, 
-	    EUCLIDEAN_DISTANCE, 
+	    //BASIC, 
+	    EUCLIDEAN_DISTANCE/*, 
 	    LESS_STEPS, 
 	    EUCLIDEAN_DISTANCE_AND_LESS_STEPS,
-	    NOT_REPEATED_STATES
+	    NOT_REPEATED_STATES*/
 	}
 	
 	private int tableroVisitas[][];
@@ -155,14 +155,14 @@ public class StarcraftEnvironment implements Environment{
 		// Here you must enter all the rewards of learning
 		
 		switch (this.policy_used) {
-	    	case BASIC:
+	    	/*case BASIC:
 	    		reward = basicPolicy();	
 	    		break;
-	    		
+	    	*/	
 	    	case EUCLIDEAN_DISTANCE:
 	    		reward = euclideanDistancePolicy(state);
 	    		break;
-	    		
+	    	/*	
 	    	case LESS_STEPS:
 	    		reward = lessStepsPolicy();
 	    		break;
@@ -174,7 +174,7 @@ public class StarcraftEnvironment implements Environment{
 	    		
 	    	case NOT_REPEATED_STATES:
 	    		reward = notRepeatedStatesPolicy(state);
-	    		break;
+	    		break;*/
 	    		
 		}
 		

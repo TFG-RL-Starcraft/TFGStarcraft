@@ -12,7 +12,7 @@ public class Constants {
 	public static final double REWARD_KEEP_VALUE = 1.0 - (GAMMA * 1.0);	
 	
 	public static final int NUM_ITERACIONES_MAX_QLEARNER = 2500; //número máximo de iteraciones (pasos) de cada intento
-	public static final int NUM_INTENTOS_APRENDIZAJE = 1500; //número de veces que se realizará el experimento con la misma QTabla. 
+	public static final int NUM_INTENTOS_APRENDIZAJE = 1000; //número de veces que se realizará el experimento con la misma QTabla. 
 							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos.	
 	
 	public static final String MAP_FILE = "laberinto.txt";
@@ -20,7 +20,7 @@ public class Constants {
 	
 	//Constantes empleadas sólo en los test
 	public static final boolean TEST_MODE = true;
-	public static final int TEST_NUM_EXPERIMENTOS = 5; //numero de experimentos completos, cada experimento consta de varios INTENTOS
+	public static final int TEST_NUM_EXPERIMENTOS = 10; //numero de experimentos completos, cada experimento consta de varios INTENTOS
 	//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
 	public static final String TEST_LOG_FILE = "log.txt";
 	public static final String TEST_QTABLE_FILE = "qtabla.txt";

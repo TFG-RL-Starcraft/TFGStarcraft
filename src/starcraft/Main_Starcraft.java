@@ -44,7 +44,7 @@ public class Main_Starcraft{
     private int max_num_exper = Constants.TEST_NUM_EXPERIMENTOS; //n√∫mero de experimentos completos, cada experimento consta de varios INTENTOS
     							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gr√°ficas
     String map; //name of the current map
-    double[] logFinal; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
+    double[][] logFinal; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
     double[][] visitasFinal; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
     private int map_size = 64;
     
@@ -79,9 +79,10 @@ public class Main_Starcraft{
                 	
                 		if(exper_index == 0)
                     	{
-    		                logFinal = new double[max_num_intentos]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
-    				    	for(int i=0; i<max_num_intentos; i++)
-    				    		logFinal[i] = 0;
+    		                logFinal = new double[max_num_exper][max_num_intentos]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
+    				    	for(int i=0; i<max_num_exper; i++)
+    				    		for(int j=0; j<max_num_intentos; j++)
+    				    			logFinal[i][j] = 0;
                     	
     				    	if(numIter[0] == 0 && pol_indx == 0 && !map_changed)
     				    	{
@@ -123,14 +124,16 @@ public class Main_Starcraft{
                 if(StarcraftPresenter.getInstance().isJustFinished()) //we are going to restart the game
                 {
                 	intento_index++;
+                	//escribe la QTabla cada 100 intentos, asÌ podemos hacer una repeticiÛn del aprendizaje con el QPlayer
+                	if(intento_index%100 == 0)
+                		IO_QTable.escribirTabla(q.qTable(), "qtabla_" + map + "_" + policies[pol_indx].name() + "_" + intento_index + ".txt");
+            		
                 	if(intento_index >= max_num_intentos) //we are going to restart the experiment
                 	{        
                 		intento_index = 0;
                 		
-                		// Almacena los datos de este experimento haciendo la MEDIA (/NUM_EXPERIMENTOS) de los mismos
-				    	//Nos interesa almacenar: A. N√∫mero de pasos utilizados en llegar al final o morir (log)
-				    							//B. N√∫mero de veces que se accede a cada estado (tableroVisitas)
-					    //A.
+                		// Almacena los datos de este experimento para luego hacer la MEDIA (/NUM_EXPERIMENTOS) de los mismos
+				    	//Nos interesa almacenar: N√∫mero de pasos utilizados en llegar al final o morir (log)
 					    ArrayList<String> log = Log.readLog(Constants.TEST_LOG_FILE);
 					    
 					    int log_index = 0;
@@ -138,46 +141,61 @@ public class Main_Starcraft{
 					    {	
 					    	if(l.compareToIgnoreCase(Constants.TEST_DEAD_STRING) == 0) //si el log es de muerto no podemos hacer la media, as√≠ que asignaremos el valor m√°ximo
 					    	{
-					    		logFinal[log_index] = logFinal[log_index] + (double)Constants.TEST_NUM_ITER_MAX[map_indx]/(double)max_num_exper;
+					    		logFinal[exper_index][log_index] = (double)Constants.TEST_NUM_ITER_MAX[map_indx];
 					    	}
 					    	else
 					    	{
-					    		logFinal[log_index] = logFinal[log_index] + Double.parseDouble(l)/(double)max_num_exper;
+					    		logFinal[exper_index][log_index] = Double.parseDouble(l);
 					    	}
 					    	log_index++;
 					    }
 					    
 					    Log.deleteLog(Constants.TEST_LOG_FILE);
-			 
-					    //B.
-					    /*for(int i2=0; i2<map_size; i2++)
-					    {
-				    		for(int j2=0; j2<map_size; j2++)
-				    		{
-				    			visitasFinal[i2][j2] = visitasFinal[i2][j2] + tablaVisitas[i2][j2]/(double)num_exper;
-				    		}
-					    }*/
-					    
+
 					    exper_index++;                	
 	                	if(exper_index >= max_num_exper) //we are going to change of politic
 	                	{
 	                		exper_index = 0; //reinicializa el indice
 	                		
-	                		//Imprime la tabla de estados visitados
-	    			    	//Excel.escribirTabla(visitasFinal, "visits_" + map + "_" + policies[pol_indx].name() + ".xlsx");
-	    			    	
-	    			        //Imprime el log final
-	    			    	Excel.escribirLog(logFinal, "iters_" + map + "_" + policies[pol_indx].name() + ".xlsx");
+	                		//Imprime el log final (HACIENDO LA MEDIA de cada linea PRIMERO)
 	                		
-	                		//Reinicializa el log
-	                		logFinal = new double[max_num_intentos]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
-	    			    	for(int i=0; i<max_num_intentos; i++)
-	    			    		logFinal[i] = 0;
+	                		double logMedia[] = new double[max_num_intentos]; 
+				    		for(int i=0; i<max_num_intentos; i++)
+				    			logMedia[i] = 0;
+					    	
+						    for(int log_line=0; log_line<max_num_intentos; log_line++)
+						    {
+						    	//calcula el m·ximo de los "max_num_exper" y lo omite en la media				    	
+						    	//calcula el mÌnimo de los "max_num_exper" y lo omite en la media
+						    	double min_value = Double.MAX_VALUE;
+						    	double max_value = Double.MIN_VALUE;
+						    	double acumulado = 0;
+						    	for(int exper=0; exper<max_num_exper; exper++)
+						    	{
+						    		if(min_value > logFinal[exper][log_line])
+						    			min_value = logFinal[exper][log_line];
+						    		if(max_value < logFinal[exper][log_line])
+						    			max_value = logFinal[exper][log_line];
+						    		acumulado = acumulado+logFinal[exper][log_line];
+						    	}
+						    	acumulado = acumulado-min_value;
+						    	acumulado = acumulado-max_value;
+						    	double media = acumulado/(double)(max_num_exper-2);
+						    	//hace la media con el resto de elementos
+						    	for(int exper=0; exper<max_num_exper; exper++)
+						    	{
+						    		logMedia[log_line] = media;
+						    	}
+						    }
+
+	    			    	Excel.escribirLog(logMedia, "iters_" + map + "_" + policies[pol_indx].name() + ".xlsx");
 	    			    	
-	    			    	/*visitasFinal = new double[map_size][map_size]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
-	    			    	for(int i=0; i<map_size; i++)
-	    			    		for(int j=0; j<map_size; j++)
-	    			    			visitasFinal[i][j] = 0;*/
+	                		//Reinicializa el log
+	    			    	logFinal = new double[max_num_exper][max_num_intentos]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
+    				    	for(int i=0; i<max_num_exper; i++)
+    				    		for(int j=0; j<max_num_intentos; j++)
+    				    			logFinal[i][j] = 0;
+	    			    	
 	    			    	pol_indx++;
 	                		if(pol_indx >= policies.length) //we are going to change the map
 	                		{
@@ -295,6 +313,7 @@ public class Main_Starcraft{
 	}
     
     public static void main(String... args) {   
+    	Log.deleteLog(Constants.TEST_LOG_FILE);
     	time_start = System.currentTimeMillis();
         new Main_Starcraft().run();
         time_end = System.currentTimeMillis();
