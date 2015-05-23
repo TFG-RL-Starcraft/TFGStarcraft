@@ -40,14 +40,20 @@ public class QLearner {
 
 			double reward = environment.getReward(newState);
 				
-			if(state != null && action != null && newState!=null) { //the previous state and action will be NULL in the first iteration, 
-						//and the newState can be null if the game ends; in these cases, we can't update the Q-Table			
+			if(state != null && action != null) { //the previous state and action will be NULL in the first iteration, 
+														// in these cases, we can't update the Q-Table			
 				
-				// Update Q-Table
+				// Update Q-Table with:
 				//Q(s,a) = Q(s,a) + alpha( r + gamma * max a'(Q(s', a')) - Q(s,a) )
-				double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * qTable.bestQuantity(newState) - qTable.get(state, action.getValue()));	
+						
+				double max_future_value = 0.0; //newState is null when the game ends; in this case we can't use this value in the formula; we use a 0.0 default value
+				if(newState!=null) 
+					max_future_value = qTable.bestQuantity(newState);
+				
+				double newValue = qTable.get(state, action.getValue()) + ALPHA * (reward + GAMMA * max_future_value - qTable.get(state, action.getValue()));	
 				newValue = Math.max(0, newValue); //this max is to prevent negative values in the QTable
-				qTable.set(state, action, newValue);		
+				qTable.set(state, action, newValue);
+				
 			}
 
 			// 2. Ask if the current state is final, and restart in that case; else perform an action
@@ -62,7 +68,7 @@ public class QLearner {
 									else
 									{
 										Log.printLog(Constants.TEST_LOG_FILE, Integer.toString(numIter[0]));
-									}										
+									}	
 
 				environment.reset();
 				numIter[0] = 0;
