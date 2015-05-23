@@ -1,8 +1,5 @@
 package q_learning;
 
-import constants.Constants;
-import entrada_salida.Log;
-
 public class QLearner {
 
 	private double ALPHA; //learning rate -> what extent the newly acquired information will override the old information
@@ -60,16 +57,6 @@ public class QLearner {
 
 			if(environment.isFinalState() || numIter[0] >= maxNumIter ) {		
 				
-									//TODO este if/else es sólo para debug
-									if( reward == Constants.REWARD_LOST && numIter[0] != 0) //-> ha muerto, numIter!=0 para que solo se imprima una vez
-									{
-										Log.printLog(Constants.TEST_LOG_FILE, Constants.TEST_DEAD_STRING);
-									}
-									else
-									{
-										Log.printLog(Constants.TEST_LOG_FILE, Integer.toString(numIter[0]));
-									}	
-
 				environment.reset();
 				numIter[0] = 0;
 				
