@@ -108,6 +108,7 @@ public class Main_Starcraft{
 			 	if(Constants.TEST_MODE)	    	
 			 		game.setGUI(false);
 				
+			 	
                 //game.enableFlag(1); 	// This command allows you to manually control the units during the game.
                 						//Is incompatible with the "game.setGUI(false)" command
 
