@@ -1,7 +1,5 @@
 package laberinto;
 
-import entrada_salida.Log;
-import entrada_salida.Excel;
 import generador_laberintos.Casilla;
 
 import java.awt.Color;
@@ -37,9 +35,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     
     private int num_intentos = Constants.NUM_INTENTOS_APRENDIZAJE; //número de veces que se realizará el experimento con la misma QTabla. 
     							//Cada intento se reinicia al "personaje" en la posición inicial y consta de NUM_ITERACIONES_MAX_QLEARNER pasos. 
-    private int num_exper = Constants.TEST_NUM_EXPERIMENTOS; //número de experimentos completos, cada experimento consta de varios INTENTOS
-    							//de los cuales luego haremos una media de los datos obtenidos, para obtener las gráficas
-    
+   
     private Casilla tablero[][]; //arraylist de JButtons para crear el tablero
     private Casilla salida;
     private Casilla meta;  
@@ -51,8 +47,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     private QLearner q; //guarda la referencia a toda la estructura del ejercicio
     private Environment env;
     QTable qT;  
-    int[][] tablaVisitas; //tabla en la que guardamos cuantas veces se pasa por cada estado
-    
+     
     ArrayList<Integer> listaEnemigos; //arraylist con los indices de los estados de las casillas con enemigo
     
     int maxX = 15; //casillas máximas en horizontal y vertical
@@ -113,140 +108,42 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 
     
     private void btEmpezarActionPerformed(java.awt.event.ActionEvent evt) {
-
-    	if(Constants.TEST_MODE)
-    	{
-	    	//ArrayList con las distintas políticas
-	    	Policies[] policies = Policies.values();    	
-	    	
-	    	long start_TOTAL = System.currentTimeMillis();
-	    	
-	    	for(int map_indx = 0; map_indx < Constants.TEST_MAP_FILES.length; map_indx++) //por cada mapa
-	    	{
-	    		String map = Constants.TEST_MAP_FILES[map_indx] + ".txt";
-	    		InicializarTablero(map);
-	    		  		
-	    		for(int pol_indx=0; pol_indx<policies.length; pol_indx++) //por cada una de las políticas
-	    		{
-	    													
-			    	double[] logFinal = new double[num_intentos]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
-			    	for(int i=0; i<num_intentos; i++)
-			    		logFinal[i] = 0;
-			    	
-			    	double[][] visitasFinal = new double[maxX][maxY]; //en esta variable almacenaremos los resultados finales de la media de todos los experimentos
-			    	for(int i=0; i<maxX; i++)
-			    		for(int j=0; j<maxY; j++)
-			    			visitasFinal[i][j] = 0;
-			    	
-			        //Realiza NUM_EXPERIMENTOS pruebas y va almacenando la media de los resultados        
-			    	for(int i=0; i<num_exper; i++)
-			    	{
-			        	//Con esto mediremos el tiempo de ejecución de cada intento (que aunque no es relevante a la hora de valorar
-			    			//la eficacia de las distintas estrategias, sí es útil para el "seguimiento" de la ejecución de los test.
-			            long start = System.currentTimeMillis();
-			    		
-			    		// 1.Inicializa y "resetea" las variables y tablas
-			    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.TEST_NUM_ITER_MAX[map_indx], Constants.REWARD_WON, Constants.REWARD_LOST, policies[pol_indx]);
-			    		
-			    		// 2.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
-					    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
-					    for(int j=0; j<num_intentos; j++)
-					    {
-					    	//Ejecuta el experimento hasta llegar a la meta, morir o llegar al NUM_ITERACIONES
-					    	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
-							//Tenemos que definir de alguna forma un bucle "infinito"
-							//Lo hacemos mediante la varible "terminado" a la que el LaberintoEnvironment puede acceder.
-					    	terminado = false;
-					    	while(!terminado)
-					    		q.step();
-					    }
-					    
-					    // 3.Almacena los datos haciendo la MEDIA (/NUM_EXPERIMENTOS) de los mismos
-					    	//Nos interesa almacenar: A. Número de pasos utilizados en llegar al final o morir (log)
-					    							//B. Número de veces que se accede a cada estado (tableroVisitas)
-					    //A.
-					    ArrayList<String> log = Log.readLog(Constants.TEST_LOG_FILE);
-					    
-					    int log_index = 0;
-					    for(String l: log)
-					    {	
-					    	if(l.compareToIgnoreCase(Constants.TEST_DEAD_STRING) == 0) //si el log es de muerto no podemos hacer la media, así que asignaremos el valor máximo
-					    	{
-					    		logFinal[log_index] = logFinal[log_index] + (double)Constants.TEST_NUM_ITER_MAX[map_indx]/(double)num_exper;
-					    	}
-					    	else
-					    	{
-					    		logFinal[log_index] = logFinal[log_index] + Double.parseDouble(l)/(double)num_exper;
-					    	}
-					    	log_index++;
-					    }
-					    
-					    Log.deleteLog(Constants.TEST_LOG_FILE);
-			 
-					    //B.
-					    for(int i2=0; i2<maxX; i2++)
-					    {
-				    		for(int j2=0; j2<maxY; j2++)
-				    		{
-				    			visitasFinal[i2][j2] = visitasFinal[i2][j2] + tablaVisitas[i2][j2]/(double)num_exper;
-				    		}
-					    }
-					    
-					    long end = System.currentTimeMillis();
-				        long res = end - start;
-				        System.out.println("EXPERIMENTO " + i + " TARDÓ : " + res/1000.0 + "segs.");
-			    	}
-	
-			    	//Imprime la tabla de estados visitados
-			    	Excel.escribirTabla(visitasFinal, "visits_" + map + "_" + policies[pol_indx].name() + ".xlsx");
-			    	
-			        //Imprime el log final
-			    	Excel.escribirLog(logFinal, "iters_" + map + "_" + policies[pol_indx].name() + ".xlsx");
-	    		}
-	    	}
-	    	
-	    	long end_TOTAL = System.currentTimeMillis();
-	        long res_TOTAL = end_TOTAL - start_TOTAL;
-	        System.out.println("--- LA EJECUCIÓN COMPLETA TARDÓ : " + res_TOTAL/1000.0 + "segs. ---");
-    	}
-    	else //!TEST_MODE
-    	{
-    		long start = System.currentTimeMillis();
-    		
-    		// 1.Inicializa el tablero
-	    	InicializarTablero(Constants.MAP_FILE);
-	    	
-	    	// 2.Inicializa y "resetea" las variables y tablas
-    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.NUM_ITERACIONES_MAX_QLEARNER, Constants.REWARD_WON, Constants.REWARD_LOST, Constants.STARCRAFT_USED_POLICY);
-    		
-    		// 3.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
-		    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
-		    for(int j=0; j<num_intentos; j++)
-		    {
-		    	//Ejecuta el experimento hasta llegar a la meta, morir o llegar al NUM_ITERACIONES
-		    	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
-				//Tenemos que definir de alguna forma un bucle "infinito"
-				//Lo hacemos mediante la varible "terminado" a la que el LaberintoEnvironment puede acceder.
-		    	terminado = false;
-		    	while(!terminado)
-		    		q.step();
-		    }
-		    
-			// 4.Imprime el mejor camino
-	        imprimeMejorCamino();  
-	        
-	        // 5.Añade a pantalla los valores de la QTable
-	        imprimeValoresQTabla();
-	        
-	        long end = System.currentTimeMillis();
-	        long res = end - start;
-	        System.out.println("TARDÓ : " + res/1000.0 + "segs.");
-	        
-    	}
+    	
+		long start = System.currentTimeMillis();
+		
+		// 1.Inicializa el tablero
+    	InicializarTablero(Constants.LABERINTO_FILE);
+    	
+    	// 2.Inicializa y "resetea" las variables y tablas
+		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.NUM_ITERACIONES_MAX_QLEARNER, Constants.REWARD_WON, Constants.REWARD_LOST, Constants.LABERINTO_USED_POLICY);
+		
+		// 3.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
+	    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
+	    for(int j=0; j<num_intentos; j++)
+	    {
+	    	//Ejecuta el experimento hasta llegar a la meta, morir o llegar al NUM_ITERACIONES
+	    	//Como la aplicación del laberinto no se ejecuta en un bucle infinito como el Starcraft
+			//Tenemos que definir de alguna forma un bucle "infinito"
+			//Lo hacemos mediante la varible "terminado" a la que el LaberintoEnvironment puede acceder.
+	    	terminado = false;
+	    	while(!terminado)
+	    		q.step();
+	    }
+	    
+		// 4.Imprime el mejor camino
+        imprimeMejorCamino();  
+        
+        // 5.Añade a pantalla los valores de la QTable
+        imprimeValoresQTabla();
+        
+        long end = System.currentTimeMillis();
+        long res = end - start;
+        System.out.println("HA TARDADO: " + res/1000.0 + "segs.");
+            	
     }
 
 	private void btCargarLaberintoActionPerformed(ActionEvent evt) {
-    	InicializarTablero(Constants.MAP_FILE);
+    	InicializarTablero(Constants.LABERINTO_FILE);
     	btEmpezar.setEnabled(true);
 	}
 
@@ -255,10 +152,9 @@ public class VentanaLaberinto extends javax.swing.JFrame {
     	LaberintoState casilla_inicial = new LaberintoState(salida.getPosX(), salida.getPosY(), maxX, maxY);
         LaberintoState casilla_final = new LaberintoState(meta.getPosX(), meta.getPosY(), maxX, maxY);
         this.estado_actual = new LaberintoState(casilla_inicial, maxX, maxY); 
-        tablaVisitas = new int[maxX][maxY];
         this.numIter = new int[1]; this.numIter[0] = 0;
         PresenterLaberinto.setInstance(this, new LaberintoActionManager(), terminado, maxX, maxY, this.numIter);
-        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, tablaVisitas, listaEnemigos, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
+        env = new LaberintoEnvironment(maxX, maxY, casilla_inicial, casilla_final, listaEnemigos, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
         qT = new QTable_Array(env.numStates(), env.numActions(), new LaberintoActionManager());        
         q = new QLearner(env, qT, new LaberintoActionManager(), num_iter_max_qlearner, this.numIter, alpha, gamma); //INICIALIZA LA ESTRUCTURA PARA EL ALGORITMO
        
@@ -429,20 +325,19 @@ public class VentanaLaberinto extends javax.swing.JFrame {
         }	
 	}
     
-    
+    @SuppressWarnings("unused")
     private void imprimeMejorCamino() {
     	LimpiarTablero();
     	env.reset();
-    	QPlayer qp = new QPlayer(env, qT, new LaberintoActionManager());
-    	int contPasos = 0;
+    	QPlayer qp = new QPlayer(env, qT, new LaberintoActionManager());   	
+		int contPasos = 0;
     	//Ejecuta el player hasta llegar a la meta
         while(!env.isFinalState())
         {
-        	qp.step(false); 
+        	qp.step(Constants.QPLAYER_MODE); 	//qPlayer "RANDOM" or "FIXED"
         	contPasos++;
         }	
         
-        Log.printLog(Constants.TEST_LOG_FILE, "/n-----QPlayer = " + contPasos + "-----\n");
 	}
     
 

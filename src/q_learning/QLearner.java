@@ -79,7 +79,7 @@ public class QLearner {
 	}
 
 	// Choose a random action considering the probabilities of each
-	private Action getAction(State state) {
+	protected Action getAction(State state) {
 		double total = 0;
 		for (int a = 0; a<environment.numActions(); a++) {
 			total += qTable.get(state, a);

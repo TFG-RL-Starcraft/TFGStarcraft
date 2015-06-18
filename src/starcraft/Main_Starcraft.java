@@ -3,7 +3,6 @@ import java.util.ArrayList;
 
 import starcraft.StarcraftEnvironment.SC_Policies;
 import constants.Constants;
-import entrada_salida.Excel;
 import entrada_salida.IO_QTable;
 import entrada_salida.Log;
 import q_learning.Environment;
@@ -57,7 +56,7 @@ public class Main_Starcraft{
             	InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.NUM_ITERACIONES_MAX_QLEARNER, Constants.REWARD_WON, Constants.REWARD_LOST, Constants.STARCRAFT_USED_POLICY);
                 
 			 	game.setLocalSpeed(0);	    	
-			 	game.setGUI(Constants.GUI_MODE);
+			 	game.setGUI(Constants.STARCRAFT_GUI_MODE_ENABLED);
 			 	
 			 	time_start = System.currentTimeMillis();				
             }
@@ -88,7 +87,7 @@ public class Main_Starcraft{
                 if(numberOfFrames >= 10)
                 {
                 	
-	            	if(Constants.LEARNING_MODE)	
+	            	if(Constants.LEARNING_OR_PLAYING_MODE)	
 	            	{
 	        			q.step(); 	//qLearner
 	            	}
@@ -130,8 +129,7 @@ public class Main_Starcraft{
             finalStateList.add(finalState);
         }
         
-        int[][] visitTable = new int[game.mapWidth()][game.mapHeight()];
-		Environment e = new StarcraftEnvironment(game, marine, finalStateList, visitTable, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
+		Environment e = new StarcraftEnvironment(game, marine, finalStateList, won_reward, lost_reward, num_iter_max_qlearner, policy_used);
 		
 		QTable qT = IO_QTable.leerTabla(Constants.TEST_QTABLE_FILE);
 		if(qT == null) {

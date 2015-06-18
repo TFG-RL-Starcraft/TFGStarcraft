@@ -14,12 +14,9 @@ public class LaberintoEnvironment implements Environment{
 	    BASIC, 
 	    EUCLIDEAN_DISTANCE, 
 	    LESS_STEPS, 
-	    EUCLIDEAN_DISTANCE_AND_LESS_STEPS,
-	    NOT_REPEATED_STATES
+	    EUCLIDEAN_DISTANCE_AND_LESS_STEPS
 	}
 	
-	private int tableroVisitas[][];
-	private boolean visitState[][];
 	private int ancho, alto;
 	private LaberintoState init_state, init_lastState;
 	private LaberintoState lastState;
@@ -33,7 +30,7 @@ public class LaberintoEnvironment implements Environment{
 	private int default_reward = 0;
 	
 
-	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, int[][] tableroVisitas, ArrayList<Integer> listaEstadosMuerto, double won_reward, double lost_reward, int max_iter, Policies policy_used) {
+	public LaberintoEnvironment(int ancho, int alto, LaberintoState state, LaberintoState lastState, ArrayList<Integer> listaEstadosMuerto, double won_reward, double lost_reward, int max_iter, Policies policy_used) {
 		this.ancho = ancho;
 		this.alto = alto;
 		this.init_state = state;
@@ -47,19 +44,6 @@ public class LaberintoEnvironment implements Environment{
 		this.max_iter = max_iter;
 		this.policy_used = policy_used;
 		
-		this.tableroVisitas = tableroVisitas;
-		for(int i = 0; i < tableroVisitas.length; i++){
-			for(int j = 0; j < tableroVisitas[i].length; j++){
-				tableroVisitas[i][j] = 0;
-			}
-		}
-		
-		this.visitState = new boolean[alto][ancho];
-		for(int i = 0; i < alto; i++){
-			for(int j = 0; j < ancho; j++){
-				this.visitState[i][j] = false;
-			}
-		}
 	}
 
 	@Override
@@ -75,22 +59,12 @@ public class LaberintoEnvironment implements Environment{
 	@Override
 	public void execute(Action action) {
 
-		// First update the table with the number of visits
-		updateNumberOfVisitsTable(state().getValue());
-
 		// Update the previous state and action before modifying the current state
 		this.previousState = state();
 		this.previousAction = action;
 
 		action.configureContext();
 		action.execute();
-	}
-	
-	private void updateNumberOfVisitsTable(int s){
-		int x = s % ancho;
-		int y = (int)(s / ancho);
-		
-		tableroVisitas[x][y]++;
 	}
 
 	@Override
@@ -158,11 +132,7 @@ public class LaberintoEnvironment implements Environment{
 	    		//4. Politicas 2 y 3 unidas
 	    		reward = euclideanDistanceLessStepsPolicy(state);
 	    		break;
-	    		
-	    	case NOT_REPEATED_STATES:
-	    		reward = notRepeatedStatesPolicy(state);
-	    		break;
-	    		
+	
 		}
 		
 		return reward;
@@ -229,27 +199,7 @@ public class LaberintoEnvironment implements Environment{
 		}
 		return reward;
 	}
-	
-	/**
-	 * 5. Not Repeated Steps Policy
-	 * gets a reward depending on whether the State has previously visited,
-	 * trying to avoid repeated states (loops)
-	 */
-	private double notRepeatedStatesPolicy(State state) {
-		double reward = this.default_reward;
-		if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = this.lost_reward;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = this.won_reward;
-		} else {
-			if (!isRepeated(state.getValue())) {
-				reward = this.default_reward + (won_reward/25000.0);
-			} else {
-				markAsVisited(state.getValue());
-			}
-		}
-		return reward;
-	}	
+
 
 	// ---------------------- Auxiliary functions for the different policies ------------------
 	
@@ -290,23 +240,4 @@ public class LaberintoEnvironment implements Environment{
 		return Math.sqrt((Math.pow(x_dist, 2) + Math.pow(y_dist, 2)));
 	}
 
-	
-	/**
-	 * @param state => state where the player is
-	 * @return if the state has been visited yet
-	 */
-	private boolean isRepeated(int state) {
-		int actualX = state % ancho;
-		int actualY = state / ancho;		
-		return this.visitState[actualX][actualY];
-	}
-
-	/**
-	 * @param state => state where the player is Mark the "state" as visited
-	 */
-	private void markAsVisited(int state) {
-		int actualX = state % ancho;
-		int actualY = state / ancho;		
-		this.visitState[actualX][actualY] = true;
-	}
 }

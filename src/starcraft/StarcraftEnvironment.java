@@ -35,7 +35,7 @@ public class StarcraftEnvironment implements Environment{
 	
 	private int default_reward = 0;
 	
-	public StarcraftEnvironment(Game game, Unit unit, ArrayList<State> finalStates, int[][] tableroVisitas, double won_reward, double lost_reward, int max_iter, SC_Policies policy_used) {
+	public StarcraftEnvironment(Game game, Unit unit, ArrayList<State> finalStates, double won_reward, double lost_reward, int max_iter, SC_Policies policy_used) {
 		this.game = game;
 		this.unit = unit;
 		this.previousState = null;
