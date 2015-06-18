@@ -8,3 +8,8 @@
 /lib/
 *.xlsx
 *.jar
+/.settings/
+*.prefs
+.classpath
+.proyect
+*.log
