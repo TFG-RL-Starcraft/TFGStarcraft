@@ -10,20 +10,17 @@ import bwapi.Unit;
 
 public class StarcraftEnvironment implements Environment{	
 	
-	public enum Policies //Enum with the possible reward policies
+	public enum SC_Policies //Enum with the possible reward policies
 	{
-	    BASIC/*, 
+	    BASIC, 
 	    EUCLIDEAN_DISTANCE, 
 	    LESS_STEPS, 
-	    EUCLIDEAN_DISTANCE_AND_LESS_STEPS,
-	    NOT_REPEATED_STATES*/
+	    EUCLIDEAN_DISTANCE_AND_LESS_STEPS
 	}
 	
-	private int tableroVisitas[][];
-	private boolean visitState[][];
 	private double won_reward, lost_reward;
 	private int max_iter;
-	private Policies policy_used;
+	private SC_Policies policy_used;
 	
 	private Game game;
 	private Unit unit;
@@ -38,7 +35,7 @@ public class StarcraftEnvironment implements Environment{
 	
 	private int default_reward = 0;
 	
-	public StarcraftEnvironment(Game game, Unit unit, ArrayList<State> finalStates, int[][] tableroVisitas, double won_reward, double lost_reward, int max_iter, Policies policy_used) {
+	public StarcraftEnvironment(Game game, Unit unit, ArrayList<State> finalStates, int[][] tableroVisitas, double won_reward, double lost_reward, int max_iter, SC_Policies policy_used) {
 		this.game = game;
 		this.unit = unit;
 		this.previousState = null;
@@ -56,19 +53,6 @@ public class StarcraftEnvironment implements Environment{
 		this.max_iter = max_iter;
 		this.policy_used = policy_used;
 		
-		this.tableroVisitas = tableroVisitas;
-		for(int i = 0; i < tableroVisitas.length; i++){
-			for(int j = 0; j < tableroVisitas[i].length; j++){
-				tableroVisitas[i][j] = 0;
-			}
-		}
-		
-		this.visitState = new boolean[game.mapHeight()][game.mapWidth()];
-		for (int i = 0; i < game.mapHeight(); i++) {
-			for (int j = 0; j < game.mapWidth(); j++) {
-				this.visitState[i][j] = false;
-			}
-		}
 	}
 
 	@Override
@@ -83,9 +67,6 @@ public class StarcraftEnvironment implements Environment{
 
 	@Override
 	public void execute(Action action) {
-		
-		// First update the table with the number of visits
-		updateNumberOfVisitsTable(state().getValue());
 		
 		// Update the previous state and action before modifying the current state
 		this.previousState = state();
@@ -105,13 +86,6 @@ public class StarcraftEnvironment implements Environment{
 		}
 	}
 	
-	private void updateNumberOfVisitsTable(int s) {
-		int x = s % game.mapWidth();
-		int y = (int)(s / game.mapWidth());
-		
-		tableroVisitas[x][y]++;
-	}
-
 	@Override
 	public State previousState() {
 		return previousState;
@@ -158,23 +132,18 @@ public class StarcraftEnvironment implements Environment{
 	    	case BASIC:
 	    		reward = basicPolicy();	
 	    		break;
-	    	/*	
+	    		
 	    	case EUCLIDEAN_DISTANCE:
 	    		reward = euclideanDistancePolicy(state);
 	    		break;
-	    	/*	
+	    		
 	    	case LESS_STEPS:
 	    		reward = lessStepsPolicy();
 	    		break;
 	    		
 	    	case EUCLIDEAN_DISTANCE_AND_LESS_STEPS:
-	    		//4. Politicas 2 y 3 unidas
 	    		reward = euclideanDistanceLessStepsPolicy(state);
 	    		break;
-	    		
-	    	case NOT_REPEATED_STATES:
-	    		reward = notRepeatedStatesPolicy(state);
-	    		break;*/
 	    		
 		}
 		
@@ -242,27 +211,6 @@ public class StarcraftEnvironment implements Environment{
 		}
 		return reward;
 	}
-	
-	/**
-	 * 5. Not Repeated Steps Policy
-	 * gets a reward depending on whether the State has previously visited,
-	 * trying to avoid repeated states (loops)
-	 */
-	private double notRepeatedStatesPolicy(State state) {
-		double reward = this.default_reward;
-		if(hasLost()) { //if the unit doesn't exist (lost game)
-			reward = this.lost_reward;
-		} else if(hasWon()) { //if the unit reaches the goal
-			reward = this.won_reward;
-		} else {
-			if (!isRepeated(state.getValue())) {
-				reward = this.default_reward + (won_reward/25000.0);
-			} else {
-				markAsVisited(state.getValue());
-			}
-		}
-		return reward;
-	}
 
 	// ---------------------- Auxiliary functions for the different policies ------------------
 
@@ -301,24 +249,5 @@ public class StarcraftEnvironment implements Environment{
 		int y_dist = Math.abs(y1 - y2);
 		
 		return Math.sqrt((Math.pow(x_dist, 2) + Math.pow(y_dist, 2)));
-	}
-
-	/**
-	 * @param state => state where the player is
-	 * @return if the state has been visited yet
-	 */
-	private boolean isRepeated(int state) {
-		int actualX = state % game.mapWidth();
-		int actualY = state / game.mapWidth();		
-		return this.visitState[actualX][actualY];
-	}
-
-	/**
-	 * @param state => state where the player is Mark the "state" as visited
-	 */
-	private void markAsVisited(int state) {
-		int actualX = state % game.mapWidth();
-		int actualY = state / game.mapWidth();		
-		this.visitState[actualX][actualY] = true;
 	}
 }

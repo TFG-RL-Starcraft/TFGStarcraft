@@ -217,7 +217,7 @@ public class VentanaLaberinto extends javax.swing.JFrame {
 	    	InicializarTablero(Constants.MAP_FILE);
 	    	
 	    	// 2.Inicializa y "resetea" las variables y tablas
-    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.NUM_ITERACIONES_MAX_QLEARNER, Constants.REWARD_WON, Constants.REWARD_LOST, Constants.USED_POLICY);
+    		InicializarQLearner(Constants.ALPHA, Constants.GAMMA, Constants.NUM_ITERACIONES_MAX_QLEARNER, Constants.REWARD_WON, Constants.REWARD_LOST, Constants.STARCRAFT_USED_POLICY);
     		
     		// 3.Ejecuta el experimento (que consta de muchos intentos seguidos del proceso de aprendizaje)
 		    //Realiza NUM_INTENTOS_APRENDIZAJE llamadas al método step de QLearner con las misma QTabla  
